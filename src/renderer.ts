@@ -1,4 +1,4 @@
-import { VNode } from "preact";
+import type { VNode } from "preact";
 
 // Terminal element types
 type TerminalElement = {
