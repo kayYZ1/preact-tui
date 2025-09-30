@@ -1,0 +1,14 @@
+{
+  "name": "prtui",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "preact": "^10.27.2"
+  }
+}
