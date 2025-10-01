@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { render } from "./renderer";
+import { render } from "./preact/renderer";
 
 const App = () => {
   return h(
