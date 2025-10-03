@@ -10,7 +10,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "preact": "^10.27.2"
+    "preact": "^10.27.2",
+    "yoga-layout": "^3.2.1"
   },
   "scripts": {
     "format": "prettier --write .",
