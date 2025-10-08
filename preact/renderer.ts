@@ -1,4 +1,4 @@
-import { h, render as preactRender, type VNode } from "preact";
+import { type VNode } from "preact";
 import { Terminal } from "../core/terminal";
 import { Colors, bold } from "../core/format";
 import type { Instance } from "./src/types";
@@ -90,7 +90,7 @@ export function render(vnode: VNode, terminal: Terminal) {
   const renderer = new Renderer(terminal);
   renderer.render(vnode);
   return {
-    rerender: (newVnode: VNode) => renderer.render(newVnode),
+    rerender: (newVNode: VNode) => renderer.render(newVNode),
     unmount: () => terminal.clear(),
   };
 }

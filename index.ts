@@ -1,13 +1,15 @@
-import { h } from 'preact';
-import { render } from './preact/renderer';
-import { Terminal } from './core/terminal';
+import { h } from "preact";
+import { render } from "./preact/renderer";
+import { Terminal } from "./core/terminal";
 
-const App = () => (
-  <box flexDirection="column">
-    <text color="green">Hello</text>
-    <text bold>World</text>
-  </box>
-);
+const App = () =>
+  h("box", { flexDirection: "column" }, [
+    h("text", { color: "green" }, "Hello"),
+    h("text", { bold: true }, "World"),
+  ]);
 
-const terminal = new Terminal();
-render(<App />, term);
+const term = new Terminal();
+render(h(App, {}), term);
+
+// Wait for 2 seconds to keep output visible
+await new Promise((resolve) => setTimeout(resolve, 2000));
