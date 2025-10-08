@@ -1,24 +1,45 @@
 const RESET = "\x1b[0m";
 
-export const red = (str: string) => `\x1b[31m${str}${RESET}`;
-export const green = (str: string) => `\x1b[32m${str}${RESET}`;
-export const yellow = (str: string) => `\x1b[33m${str}${RESET}`;
-export const blue = (str: string) => `\x1b[34m${str}${RESET}`;
-export const magenta = (str: string) => `\x1b[35m${str}${RESET}`;
-export const cyan = (str: string) => `\x1b[36m${str}${RESET}`;
-export const white = (str: string) => `\x1b[37m${str}${RESET}`;
-export const gray = (str: string) => `\x1b[90m${str}${RESET}`;
-export const black = (str: string) => `\x1b[30m${str}${RESET}`;
+const red = (str: string) => `\x1b[31m${str}${RESET}`;
+const green = (str: string) => `\x1b[32m${str}${RESET}`;
+const yellow = (str: string) => `\x1b[33m${str}${RESET}`;
+const blue = (str: string) => `\x1b[34m${str}${RESET}`;
+const magenta = (str: string) => `\x1b[35m${str}${RESET}`;
+const cyan = (str: string) => `\x1b[36m${str}${RESET}`;
+const white = (str: string) => `\x1b[37m${str}${RESET}`;
+const gray = (str: string) => `\x1b[90m${str}${RESET}`;
+const black = (str: string) => `\x1b[30m${str}${RESET}`;
 
-export const bgRed = (str: string) => `\x1b[41m${str}${RESET}`;
-export const bgGreen = (str: string) => `\x1b[42m${str}${RESET}`;
-export const bgYellow = (str: string) => `\x1b[43m${str}${RESET}`;
-export const bgBlue = (str: string) => `\x1b[44m${str}${RESET}`;
-export const bgMagenta = (str: string) => `\x1b[45m${str}${RESET}`;
-export const bgCyan = (str: string) => `\x1b[46m${str}${RESET}`;
-export const bgWhite = (str: string) => `\x1b[47m${str}${RESET}`;
-export const bgGray = (str: string) => `\x1b[100m${str}${RESET}`;
-export const bgBlack = (str: string) => `\x1b[40m${str}${RESET}`;
+const bgRed = (str: string) => `\x1b[41m${str}${RESET}`;
+const bgGreen = (str: string) => `\x1b[42m${str}${RESET}`;
+const bgYellow = (str: string) => `\x1b[43m${str}${RESET}`;
+const bgBlue = (str: string) => `\x1b[44m${str}${RESET}`;
+const bgMagenta = (str: string) => `\x1b[45m${str}${RESET}`;
+const bgCyan = (str: string) => `\x1b[46m${str}${RESET}`;
+const bgWhite = (str: string) => `\x1b[47m${str}${RESET}`;
+const bgGray = (str: string) => `\x1b[100m${str}${RESET}`;
+const bgBlack = (str: string) => `\x1b[40m${str}${RESET}`;
+
+export const Colors = {
+  red,
+  green,
+  yellow,
+  blue,
+  magenta,
+  cyan,
+  white,
+  gray,
+  black,
+  bgRed,
+  bgGreen,
+  bgYellow,
+  bgBlue,
+  bgMagenta,
+  bgCyan,
+  bgWhite,
+  bgGray,
+  bgBlack,
+};
 
 export const bold = (str: string) => `\x1b[1m${str}\x1b[22m`;
 export const dim = (str: string) => `\x1b[2m${str}\x1b[22m`;

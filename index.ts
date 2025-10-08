@@ -1,19 +1,13 @@
-import { h } from "preact";
-import { render } from "./preact/renderer";
+import { h } from 'preact';
+import { render } from './preact/renderer';
+import { Terminal } from './core/terminal';
 
-const App = () => {
-  return h(
-    "div",
-    null,
-    "Hello World!",
-    h("div", null, "This is a minimal Preact TUI"),
-    h("div", null, "Built with Preact reconciliation"),
-  );
-};
+const App = () => (
+  <box flexDirection="column">
+    <text color="green">Hello</text>
+    <text bold>World</text>
+  </box>
+);
 
-const app = h(App, null);
-render(app as any);
-
-setTimeout(() => {
-  process.exit(0);
-}, 3000);
+const terminal = new Terminal();
+render(<App />, term);

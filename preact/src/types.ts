@@ -1,8 +1,8 @@
 import type { VNode } from "preact";
-import Yoga from "yoga-layout";
 
-type Instance = {
+export interface Instance {
   type: "box" | "text";
   props: any;
   children: Instance[];
-};
+  parent?: Instance;
+}
