@@ -6,8 +6,8 @@ export class Terminal {
 
   constructor(stdout: Bun.BunFile = Bun.stdout) {
     this.stdout = stdout;
-    this.width = 80;
-    this.height = 24;
+    this.width = process.stdout.columns || 80;
+    this.height = process.stdout.rows || 24;
     this.clear();
   }
 
