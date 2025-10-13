@@ -53,6 +53,11 @@ export class Renderer {
   }
 
   createInstanceTree(vnode: VNode): Instance {
+    if (typeof vnode.type === "function") {
+      const childVNode = (vnode.type as any)(vnode.props);
+      return this.createInstanceTree(childVNode);
+    }
+
     const type =
       typeof vnode.type === "string" ? (vnode.type as "box" | "text") : "box";
     const instance: Instance = {
@@ -71,7 +76,7 @@ export class Renderer {
           props: { children: child.toString() },
           children: [],
         });
-      } else if (child.type) {
+      } else if (child && typeof child === "object" && child.type) {
         instance.children.push(this.createInstanceTree(child));
       }
     }
