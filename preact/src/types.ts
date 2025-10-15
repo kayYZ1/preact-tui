@@ -5,4 +5,5 @@ export interface Instance {
   props: any;
   children: Instance[];
   parent?: Instance;
+  yogaNode?: any;
 }

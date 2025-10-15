@@ -1,6 +1,9 @@
 import { type VNode } from "preact";
 import { Terminal } from "../core/terminal";
 import type { Instance } from "./src/types";
+import Y from "yoga-layout";
+import { renderText } from "./renderers/text";
+import { renderBox } from "./renderers/box";
 
 export class Renderer {
   terminal: Terminal;
@@ -10,57 +13,14 @@ export class Renderer {
     this.terminal = terminal;
   }
 
-  renderInstance(instance: Instance, offsetY = 0): string[] {
-    let lines: string[] = [];
-
+  renderInstance(
+    instance: Instance,
+  ): Array<{ x: number; y: number; text: string }> {
     if (instance.type === "text") {
-      let text = instance.props.children || "";
-      if (typeof instance.props.color === "string") {
-        let colorInput = instance.props.color;
-        let isBg = false;
-        if (colorInput.startsWith("bg")) {
-          isBg = true;
-          colorInput = colorInput.slice(2).toLowerCase();
-        }
-        const ansi = Bun.color(colorInput, "ansi");
-        if (ansi) {
-          if (isBg) {
-            // Change foreground to background: 38 -> 48
-            const bgAnsi = ansi.replace(/\x1b\[38/, "\x1b[48");
-            text = `${bgAnsi}${text}\x1b[0m`;
-          } else {
-            text = `${ansi}${text}\x1b[0m`;
-          }
-        }
-      }
-      if (instance.props.bold) text = `\x1b[1m${text}\x1b[22m`;
-      // Add more: underline, italic, etc.
-      lines = [text.slice(0, this.terminal.width)]; // Truncate to terminal width
-    } else if (instance.type === "box") {
-      const direction = instance.props.flexDirection || "column";
-      let currentRow = "";
-      for (const child of instance.children) {
-        const childLines = this.renderInstance(child, offsetY + lines.length);
-        if (direction === "row") {
-          // Concat horizontally, truncate if too wide
-          if (!lines[0]) lines[0] = "";
-          const remainingWidth = this.terminal.width - currentRow.length;
-          const childText = childLines[0]?.slice(0, remainingWidth) || "";
-          currentRow += childText;
-          lines[0] = currentRow;
-        } else {
-          // Stack vertically
-          lines.push(...childLines);
-        }
-      }
-      // Apply padding if specified
-      if (instance.props.padding) {
-        const pad = " ".repeat(instance.props.padding);
-        lines = lines.map((line) => pad + line);
-      }
+      return renderText(instance);
+    } else {
+      return renderBox(instance, this.renderInstance.bind(this));
     }
-
-    return lines;
   }
 
   createInstanceTree(vnode: VNode): Instance {
@@ -77,18 +37,53 @@ export class Renderer {
       children: [],
     };
 
+    instance.yogaNode = Y.Node.create();
+
+    if (type === "text") {
+      const text = instance.props.children || "";
+      instance.yogaNode.setWidth(text.length);
+      instance.yogaNode.setHeight(1);
+    } else {
+      if (instance.props.flexDirection === "row") {
+        instance.yogaNode.setFlexDirection(0); // ROW
+      } else {
+        instance.yogaNode.setFlexDirection(1); // COLUMN
+      }
+      if (instance.props.padding) {
+        instance.yogaNode.setPadding(Y.EDGE_ALL, instance.props.padding);
+      }
+      if (instance.props.width)
+        instance.yogaNode.setWidth(instance.props.width);
+      if (instance.props.height)
+        instance.yogaNode.setHeight(instance.props.height);
+    }
+
     const children = Array.isArray(vnode.props.children)
       ? vnode.props.children
       : [vnode.props.children].filter(Boolean);
     for (const child of children) {
       if (typeof child === "string" || typeof child === "number") {
-        instance.children.push({
+        const childInstance: Instance = {
           type: "text",
           props: { children: child.toString() },
           children: [],
-        });
+        };
+        childInstance.yogaNode = Y.Node.create();
+        const text = childInstance.props.children;
+        childInstance.yogaNode.setWidth(text.length);
+        childInstance.yogaNode.setHeight(1);
+        instance.children.push(childInstance);
+        instance.yogaNode.insertChild(
+          childInstance.yogaNode,
+          instance.children.length - 1,
+        );
       } else if (child && typeof child === "object" && child.type) {
-        instance.children.push(this.createInstanceTree(child));
+        const childInstance = this.createInstanceTree(child);
+        instance.children.push(childInstance);
+        instance.yogaNode.insertChild(
+          childInstance.yogaNode,
+          instance.children.length - 1,
+        );
       }
     }
 
@@ -97,8 +92,15 @@ export class Renderer {
 
   render(vnode: VNode) {
     this.rootInstance = this.createInstanceTree(vnode);
-    const lines = this.renderInstance(this.rootInstance);
-    this.terminal.render(lines);
+    this.rootInstance.yogaNode.setWidth(this.terminal.width);
+    this.rootInstance.yogaNode.setHeight(this.terminal.height);
+    this.rootInstance.yogaNode.calculateLayout(
+      this.terminal.width,
+      this.terminal.height,
+      Y.DIRECTION_LTR,
+    );
+    const positions = this.renderInstance(this.rootInstance);
+    this.terminal.render(positions);
   }
 }
 
