@@ -1,20 +1,21 @@
 {
-  "name": "prtui",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "prettier": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "preact": "^10.27.2",
-    "yoga-layout": "^3.2.1"
-  },
-  "scripts": {
-    "format": "prettier --write .",
-    "test": "bun run index.ts"
-  }
+	"name": "prtui",
+	"module": "index.ts",
+	"type": "module",
+	"devDependencies": {
+		"@biomejs/biome": "2.2.6",
+		"@types/bun": "latest",
+		"prettier": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"preact": "^10.27.2",
+		"yoga-layout": "^3.2.1"
+	},
+	"scripts": {
+		"format": "prettier --write .",
+		"test": "bun run index.ts"
+	}
 }
