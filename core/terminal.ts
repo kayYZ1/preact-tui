@@ -27,7 +27,7 @@ export class Terminal {
 		);
 		for (const { x, y, text } of positions) {
 			for (let i = 0; i < text.length && x + i < this.width && y < this.height; i++) {
-				this.buffer[y][x + i] = text[i];
+        this.buffer[y][x + i] = text.charAt(i);
 			}
 		}
 		const newLines = this.buffer.map((row) => row.join(""));
