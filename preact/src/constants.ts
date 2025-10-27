@@ -1,0 +1,6 @@
+export const YOGA_FLEX_DIRECTION = {
+	COLUMN: 0,
+	COLUMN_REVERSE: 1,
+	ROW: 2,
+	ROW_REVERSE: 3,
+};

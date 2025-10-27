@@ -3,7 +3,7 @@ import { render } from "./preact/renderer";
 import { Terminal } from "./core/terminal";
 
 const App = () =>
-	h("box", { flexDirection: "row" }, [
+	h("box", { flexDirection: "column" }, [
 		h("text", { color: "red" }, "Hello"),
 		h("text", { bold: true }, "World"),
 	]);
@@ -11,8 +11,8 @@ const App = () =>
 const term = new Terminal();
 render(h(App, {}), term);
 
-process.on('SIGINT', () => {
-  term.clear();
-  process.exit();
-})
+process.on("SIGINT", () => {
+	term.clear();
+	process.exit();
+});
 process.stdin.resume();

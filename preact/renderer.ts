@@ -1,9 +1,10 @@
 import { type VNode } from "preact";
-import { Terminal } from "../core/terminal";
-import type { Instance } from "./src/types";
 import Y from "yoga-layout";
-import { renderText } from "./renderers/text";
+import { Terminal } from "../core/terminal";
 import { renderBox } from "./renderers/box";
+import { renderText } from "./renderers/text";
+import type { Instance } from "./src/types";
+import { YOGA_FLEX_DIRECTION } from "./src/constants";
 
 export class Renderer {
 	terminal: Terminal;
@@ -42,9 +43,9 @@ export class Renderer {
 			instance.yogaNode.setHeight(1);
 		} else {
 			if (instance.props.flexDirection === "row") {
-				instance.yogaNode.setFlexDirection(0); // ROW
+				instance.yogaNode.setFlexDirection(YOGA_FLEX_DIRECTION.ROW);
 			} else {
-				instance.yogaNode.setFlexDirection(1); // COLUMN
+				instance.yogaNode.setFlexDirection(YOGA_FLEX_DIRECTION.COLUMN);
 			}
 			if (instance.props.padding) {
 				instance.yogaNode.setPadding(Y.EDGE_ALL, instance.props.padding);
