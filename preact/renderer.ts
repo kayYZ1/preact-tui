@@ -43,9 +43,9 @@ export class Renderer {
 			instance.yogaNode.setHeight(1);
 		} else {
 			if (instance.props.flexDirection === "row") {
-				instance.yogaNode.setFlexDirection(YOGA_FLEX_DIRECTION.ROW);
+				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW);
 			} else {
-				instance.yogaNode.setFlexDirection(YOGA_FLEX_DIRECTION.COLUMN);
+				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
 			}
 			if (instance.props.padding) {
 				instance.yogaNode.setPadding(Y.EDGE_ALL, instance.props.padding);

@@ -3,7 +3,7 @@ import { render } from "./preact/renderer";
 import { Terminal } from "./core/terminal";
 
 const App = () =>
-	h("box", { flexDirection: "column" }, [
+	h("box", { flexDirection: "row" }, [
 		h("text", { color: "red" }, "Hello"),
 		h("text", { bold: true }, "World"),
 	]);
