@@ -15,22 +15,26 @@ export class Renderer {
 		this.terminal = terminal;
 	}
 
-	renderInstance(instance: Instance, parentX = 0, parentY = 0): Array<{ x: number; y: number; text: string }> {
-    const x = parentX + instance.yogaNode.getComputedLeft();
-    const y = parentY + instance.yogaNode.getComputedTop();
+	renderInstance(
+		instance: Instance,
+		parentX = 0,
+		parentY = 0,
+	): Array<{ x: number; y: number; text: string }> {
+		const x = parentX + instance.yogaNode.getComputedLeft();
+		const y = parentY + instance.yogaNode.getComputedTop();
 
-    if (instance.type === "text") {
-        return [{
-            x: Math.round(x),
-            y: Math.round(y),
-            text: formatText(instance)
-        }];
-    } else {
-        return instance.children.flatMap(child =>
-            this.renderInstance(child, x, y)
-        );
-    }
-}
+		if (instance.type === "text") {
+			return [
+				{
+					x: Math.round(x),
+					y: Math.round(y),
+					text: formatText(instance),
+				},
+			];
+		} else {
+			return instance.children.flatMap((child) => this.renderInstance(child, x, y));
+		}
+	}
 
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
@@ -52,12 +56,12 @@ export class Renderer {
 			instance.yogaNode.setWidth(text.length);
 			instance.yogaNode.setHeight(1);
 		} else {
-		    if (instance.props.flex) {
-                instance.yogaNode.setFlex(instance.props.flex);
+			if (instance.props.flex) {
+				instance.yogaNode.setFlex(instance.props.flex);
 			}
 
-			if  (instance.props.gap) {
-                instance.yogaNode.setGap(Y.GUTTER_ALL, instance.props.gap);
+			if (instance.props.gap) {
+				instance.yogaNode.setGap(Y.GUTTER_ALL, instance.props.gap);
 			}
 
 			if (instance.props.flexDirection === "row") {
