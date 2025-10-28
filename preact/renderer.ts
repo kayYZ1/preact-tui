@@ -5,6 +5,7 @@ import { renderBox } from "./renderers/box";
 import { renderText } from "./renderers/text";
 import type { Instance } from "./src/types";
 import { YOGA_FLEX_DIRECTION } from "./src/constants";
+import { formatText } from "../core/format-text";
 
 export class Renderer {
 	terminal: Terminal;
@@ -14,13 +15,22 @@ export class Renderer {
 		this.terminal = terminal;
 	}
 
-	renderInstance(instance: Instance): Array<{ x: number; y: number; text: string }> {
-		if (instance.type === "text") {
-			return renderText(instance);
-		} else {
-			return renderBox(instance, this.renderInstance.bind(this));
-		}
-	}
+	renderInstance(instance: Instance, parentX = 0, parentY = 0): Array<{ x: number; y: number; text: string }> {
+    const x = parentX + instance.yogaNode.getComputedLeft();
+    const y = parentY + instance.yogaNode.getComputedTop();
+
+    if (instance.type === "text") {
+        return [{
+            x: Math.round(x),
+            y: Math.round(y),
+            text: formatText(instance)
+        }];
+    } else {
+        return instance.children.flatMap(child =>
+            this.renderInstance(child, x, y)
+        );
+    }
+}
 
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
@@ -42,14 +52,24 @@ export class Renderer {
 			instance.yogaNode.setWidth(text.length);
 			instance.yogaNode.setHeight(1);
 		} else {
+		    if (instance.props.flex) {
+                instance.yogaNode.setFlex(instance.props.flex);
+			}
+
+			if  (instance.props.gap) {
+                instance.yogaNode.setGap(Y.GUTTER_ALL, instance.props.gap);
+			}
+
 			if (instance.props.flexDirection === "row") {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW);
 			} else {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
 			}
+
 			if (instance.props.padding) {
 				instance.yogaNode.setPadding(Y.EDGE_ALL, instance.props.padding);
 			}
+
 			if (instance.props.width) instance.yogaNode.setWidth(instance.props.width);
 			if (instance.props.height) instance.yogaNode.setHeight(instance.props.height);
 		}
@@ -89,7 +109,7 @@ export class Renderer {
 			this.terminal.height,
 			Y.DIRECTION_LTR,
 		);
-		const positions = this.renderInstance(this.rootInstance);
+		const positions = this.renderInstance(this.rootInstance, 0, 0);
 		this.terminal.render(positions);
 	}
 }

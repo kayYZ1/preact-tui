@@ -21,7 +21,9 @@ export function renderText(instance: Instance): Array<{ x: number; y: number; te
 		}
 	}
 	if (instance.props.bold) text = `\x1b[1m${text}\x1b[22m`;
-	// Add more: underline, italic, etc.
+	if (instance.props.italic) text = `\x1b[3m${text}\x1b[23m`;
+	if (instance.props.underline) text = `\x1b[4m${text}\x1b[24m`;
+	if (instance.props.strikethrough) text = `\x1b[9m${text}\x1b[29m`;
 	return [
 		{
 			x: Math.round(instance.yogaNode.getComputedLeft()),
