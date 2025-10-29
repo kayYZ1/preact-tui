@@ -1,4 +1,4 @@
-import type { Instance } from "../preact/src/types";
+import type { Instance } from "../../preact/src/types";
 
 export const formatText = (instance: Instance): string => {
 	let text = instance.props.children || "";

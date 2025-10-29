@@ -21,27 +21,9 @@ export class Terminal {
 	}
 
 	render(positions: Array<{ x: number; y: number; text: string }>) {
-		// Reset buffer
-		this.buffer = Array.from({ length: this.height }, () =>
-			Array.from({ length: this.width }, () => " "),
-		);
+		this.stdout.write("\x1b[2J\x1b[H"); // Clear screen and move to top-left
 		for (const { x, y, text } of positions) {
-			for (let i = 0; i < text.length && x + i < this.width && y < this.height; i++) {
-				this.buffer[y][x + i] = text.charAt(i);
-			}
+			this.stdout.write(`\x1b[${y + 1};${x + 1}H${text}`);
 		}
-		const newLines = this.buffer.map((row) => row.join(""));
-		let delta = "";
-		const maxHeight = Math.max(newLines.length, this.lines.length);
-		for (let i = 0; i < maxHeight; i++) {
-			const newLine = (newLines[i] || "").padEnd(this.width, " ");
-			const oldLine = (this.lines[i] || "").padEnd(this.width, " ");
-			if (newLine !== oldLine) {
-				delta += `\x1b[${i + 1};1H${newLine}`; // Move to row, write
-				if (!newLines[i]) delta += "\x1b[K"; // Clear to EOL if line empty
-			}
-		}
-		if (delta) this.stdout.write(delta);
-		this.lines = newLines.map((line) => line.padEnd(this.width, " "));
 	}
 }

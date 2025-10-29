@@ -4,8 +4,7 @@ import { Terminal } from "../core/terminal";
 import { renderBox } from "./renderers/box";
 import { renderText } from "./renderers/text";
 import type { Instance } from "./src/types";
-import { YOGA_FLEX_DIRECTION } from "./src/constants";
-import { formatText } from "../core/format-text";
+import { formatText } from "../core/utils/format-text";
 
 export class Renderer {
 	terminal: Terminal;
@@ -61,11 +60,15 @@ export class Renderer {
 			}
 
 			if (instance.props.gap) {
-				instance.yogaNode.setGap(Y.GUTTER_ALL, instance.props.gap);
+				const gutter =
+					instance.props.flexDirection === "row" ? Y.GUTTER_ROW : Y.GUTTER_COLUMN;
+				instance.yogaNode.setGap(gutter, instance.props.gap);
 			}
 
 			if (instance.props.flexDirection === "row") {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW);
+			} else if (instance.props.flexDirection === "column-reverse") {
+				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN_REVERSE);
 			} else {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
 			}
