@@ -13,9 +13,7 @@ export class Terminal {
 	}
 
 	clear() {
-		this.buffer = Array.from({ length: this.height }, () =>
-			Array.from({ length: this.width }, () => " "),
-		);
+		this.buffer = Array.from({ length: this.height }, () => Array.from({ length: this.width }, () => " "));
 		this.lines = this.buffer.map((row) => row.join(""));
 		this.stdout.write("\x1b[2J\x1b[H");
 	}

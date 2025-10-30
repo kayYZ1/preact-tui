@@ -1,8 +1,6 @@
 import { type VNode } from "preact";
 import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
-import { renderBox } from "./renderers/box";
-import { renderText } from "./renderers/text";
 import type { Instance } from "./src/types";
 import { formatText } from "../core/utils/format-text";
 
@@ -14,11 +12,7 @@ export class Renderer {
 		this.terminal = terminal;
 	}
 
-	renderInstance(
-		instance: Instance,
-		parentX = 0,
-		parentY = 0,
-	): Array<{ x: number; y: number; text: string }> {
+	renderInstance(instance: Instance, parentX = 0, parentY = 0): Array<{ x: number; y: number; text: string }> {
 		const x = parentX + instance.yogaNode.getComputedLeft();
 		const y = parentY + instance.yogaNode.getComputedTop();
 
@@ -59,18 +53,64 @@ export class Renderer {
 				instance.yogaNode.setFlex(instance.props.flex);
 			}
 
-			if (instance.props.gap) {
-				const gutter =
-					instance.props.flexDirection === "row" ? Y.GUTTER_ROW : Y.GUTTER_COLUMN;
-				instance.yogaNode.setGap(gutter, instance.props.gap);
-			}
-
 			if (instance.props.flexDirection === "row") {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW);
+			} else if (instance.props.flexDirection === "column") {
+				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
+			} else if (instance.props.flexDirection === "row-reverse") {
+				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW_REVERSE);
 			} else if (instance.props.flexDirection === "column-reverse") {
 				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN_REVERSE);
-			} else {
-				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
+			}
+
+			if (instance.props.justifyContent) {
+				switch (instance.props.justifyContent) {
+					case "flex-start":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_FLEX_START);
+						break;
+					case "center":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_CENTER);
+						break;
+					case "flex-end":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_FLEX_END);
+						break;
+					case "space-between":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_BETWEEN);
+						break;
+					case "space-around":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_AROUND);
+						break;
+					case "space-evenly":
+						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_EVENLY);
+						break;
+				}
+			}
+
+			if (instance.props.alignItems) {
+				switch (instance.props.alignItems) {
+					case "flex-start":
+						instance.yogaNode.setAlignItems(Y.ALIGN_FLEX_START);
+						break;
+					case "center":
+						instance.yogaNode.setAlignItems(Y.ALIGN_CENTER);
+						break;
+					case "flex-end":
+						instance.yogaNode.setAlignItems(Y.ALIGN_FLEX_END);
+						break;
+					case "stretch":
+						instance.yogaNode.setAlignItems(Y.ALIGN_STRETCH);
+						break;
+					case "baseline":
+						instance.yogaNode.setAlignItems(Y.ALIGN_BASELINE);
+						break;
+				}
+			}
+
+			if (instance.props.gap) {
+				const isRowDirection =
+					instance.props.flexDirection === "row" || instance.props.flexDirection === "row-reverse";
+				const gutter = isRowDirection ? Y.GUTTER_COLUMN : Y.GUTTER_ROW;
+				instance.yogaNode.setGap(gutter, instance.props.gap);
 			}
 
 			if (instance.props.padding) {
@@ -111,11 +151,7 @@ export class Renderer {
 		this.rootInstance = this.createInstanceTree(vnode);
 		this.rootInstance.yogaNode.setWidth(this.terminal.width);
 		this.rootInstance.yogaNode.setHeight(this.terminal.height);
-		this.rootInstance.yogaNode.calculateLayout(
-			this.terminal.width,
-			this.terminal.height,
-			Y.DIRECTION_LTR,
-		);
+		this.rootInstance.yogaNode.calculateLayout(this.terminal.width, this.terminal.height, Y.DIRECTION_LTR);
 		const positions = this.renderInstance(this.rootInstance, 0, 0);
 		this.terminal.render(positions);
 	}
@@ -126,6 +162,6 @@ export function render(vnode: VNode, terminal: Terminal) {
 	renderer.render(vnode);
 	return {
 		rerender: (newVNode: VNode) => renderer.render(newVNode),
-		unmount: () => terminal.clear(),
+		unmount: () => terminal.clear(), // ToDo: Free yoga nodes recursively
 	};
 }

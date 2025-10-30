@@ -5,3 +5,5 @@ export interface Instance {
 	parent?: Instance;
 	yogaNode?: any;
 }
+
+//ToDo: Add types for styling props
