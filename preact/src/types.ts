@@ -22,11 +22,16 @@ export interface TextProps extends BaseProps {
 	italic?: boolean;
 }
 
-export type ComponentProps = BoxProps | TextProps;
-
-export interface Instance {
-	type: "box" | "text";
-	props: ComponentProps;
-	children: Instance[];
-	yogaNode: ReturnType<typeof Y.Node.create>;
-}
+export type Instance =
+	| {
+			type: "box";
+			props: BoxProps;
+			children: Instance[];
+			yogaNode?: ReturnType<typeof Y.Node.create>;
+	  }
+	| {
+			type: "text";
+			props: TextProps;
+			children: Instance[];
+			yogaNode?: ReturnType<typeof Y.Node.create>;
+	  };

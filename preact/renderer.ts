@@ -44,13 +44,13 @@ export class Renderer {
 
 		instance.yogaNode = Y.Node.create();
 
-		if (type === "text") {
+		if (instance.type === "text") {
 			const text = instance.props.children || "";
 			instance.yogaNode.setWidth(text.length);
 			instance.yogaNode.setHeight(1);
 		} else {
 			if (instance.props.flex) {
-				instance.yogaNode.setFlex(instance.props.flex);
+				instance.yogaNode.setFlex(Number(instance.props.flex));
 			}
 
 			if (instance.props.flexDirection === "row") {
