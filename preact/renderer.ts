@@ -29,6 +29,13 @@ export class Renderer {
 		}
 	}
 
+	freeYogaNodes(instance: Instance) {
+		for (const child of instance.children) {
+			this.freeYogaNodes(child);
+		}
+		instance.yogaNode.free();
+	}
+
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
 			const childVNode = (vnode.type as any)(vnode.props);
@@ -161,6 +168,12 @@ export function render(vnode: VNode, terminal: Terminal) {
 	renderer.render(vnode);
 	return {
 		rerender: (newVNode: VNode) => renderer.render(newVNode),
-		unmount: () => terminal.clear(), // ToDo: Free yoga nodes recursively
+		unmount: () => {
+			if (renderer.rootInstance) {
+				renderer.freeYogaNodes(renderer.rootInstance);
+				renderer.rootInstance = null;
+			}
+			terminal.clear();
+		},
 	};
 }
