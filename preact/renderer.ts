@@ -40,9 +40,8 @@ export class Renderer {
 			type,
 			props: vnode.props,
 			children: [],
+			yogaNode: Y.Node.create(),
 		};
-
-		instance.yogaNode = Y.Node.create();
 
 		if (instance.type === "text") {
 			const text = instance.props.children || "";
@@ -130,8 +129,8 @@ export class Renderer {
 					type: "text",
 					props: { children: child.toString() },
 					children: [],
+					yogaNode: Y.Node.create(),
 				};
-				childInstance.yogaNode = Y.Node.create();
 				const text = childInstance.props.children;
 				childInstance.yogaNode.setWidth(text.length);
 				childInstance.yogaNode.setHeight(1);

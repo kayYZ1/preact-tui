@@ -27,11 +27,11 @@ export type Instance =
 			type: "box";
 			props: BoxProps;
 			children: Instance[];
-			yogaNode?: ReturnType<typeof Y.Node.create>;
+			yogaNode: ReturnType<typeof Y.Node.create>;
 	  }
 	| {
 			type: "text";
 			props: TextProps;
 			children: Instance[];
-			yogaNode?: ReturnType<typeof Y.Node.create>;
+			yogaNode: ReturnType<typeof Y.Node.create>;
 	  };
