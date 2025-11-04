@@ -1,7 +1,7 @@
 import type { Instance } from "../../preact/src/types";
 
 export const formatText = (instance: Instance): string => {
-    if (instance.type !== "text") return "";
+	if (instance.type !== "text") return "";
 
 	let text = instance.props.children || "";
 
