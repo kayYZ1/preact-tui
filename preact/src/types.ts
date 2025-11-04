@@ -20,6 +20,8 @@ export interface TextProps extends BaseProps {
 	color?: string;
 	bold?: boolean;
 	italic?: boolean;
+	underline?: boolean;
+	strikethrough?: boolean;
 }
 
 export type Instance =
