@@ -11,11 +11,15 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@preact/signals": "^2.5.1",
 		"preact": "^10.27.2",
 		"yoga-layout": "^3.2.1"
 	},
 	"scripts": {
 		"format": "prettier --write .",
-		"test": "bun run index.ts"
+		"playground:counter": "bun run playground/counter.tsx",
+		"playground:clock": "bun run playground/clock.tsx",
+		"playground:layout": "bun run playground/layout.tsx",
+		"playground:spinner": "bun run playground/spinner.tsx"
 	}
 }

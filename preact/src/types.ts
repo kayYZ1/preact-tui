@@ -1,5 +1,19 @@
 import Y from "yoga-layout";
 
+export interface Position {
+	x: number;
+	y: number;
+	text: string;
+}
+
+export interface RenderContext {
+	parentX: number;
+	parentY: number;
+	renderInstance: (instance: Instance, parentX: number, parentY: number) => Position[];
+}
+
+export type ElementRenderer<T extends Instance = Instance> = (instance: T, context: RenderContext) => Position[];
+
 export interface BaseProps {
 	/** Child elements */
 	children?: any;

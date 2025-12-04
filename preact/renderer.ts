@@ -1,32 +1,28 @@
 import { type VNode } from "preact";
+import { effect } from "@preact/signals";
 import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
-import type { Instance } from "./src/types";
-import { formatText } from "../core/utils/format-text";
+import type { Instance, Position, RenderContext } from "./src/types";
+import { getRenderer } from "./renderers";
 
 export class Renderer {
 	terminal: Terminal;
 	rootInstance: Instance | null = null;
+	disposeEffect: (() => void) | null = null;
 
 	constructor(terminal: Terminal) {
 		this.terminal = terminal;
 	}
 
-	renderInstance(instance: Instance, parentX = 0, parentY = 0): Array<{ x: number; y: number; text: string }> {
-		const x = parentX + instance.yogaNode.getComputedLeft();
-		const y = parentY + instance.yogaNode.getComputedTop();
+	renderInstance(instance: Instance, parentX = 0, parentY = 0): Position[] {
+		const context: RenderContext = {
+			parentX,
+			parentY,
+			renderInstance: this.renderInstance.bind(this),
+		};
 
-		if (instance.type === "text") {
-			return [
-				{
-					x: Math.round(x),
-					y: Math.round(y),
-					text: formatText(instance),
-				},
-			];
-		} else {
-			return instance.children.flatMap((child) => this.renderInstance(child, x, y));
-		}
+		const renderer = getRenderer(instance.type);
+		return renderer(instance, context);
 	}
 
 	freeYogaNodes(instance: Instance) {
@@ -153,7 +149,10 @@ export class Renderer {
 		return instance;
 	}
 
-	render(vnode: VNode) {
+	commitRender(vnode: VNode) {
+		if (this.rootInstance) {
+			this.freeYogaNodes(this.rootInstance);
+		}
 		this.rootInstance = this.createInstanceTree(vnode);
 		this.rootInstance.yogaNode.setWidth(this.terminal.width);
 		this.rootInstance.yogaNode.setHeight(this.terminal.height);
@@ -161,19 +160,32 @@ export class Renderer {
 		const positions = this.renderInstance(this.rootInstance, 0, 0);
 		this.terminal.render(positions);
 	}
+
+	render(createVNode: () => VNode) {
+		this.disposeEffect = effect(() => {
+			const vnode = createVNode();
+			this.commitRender(vnode);
+		});
+	}
+
+	unmount() {
+		if (this.disposeEffect) {
+			this.disposeEffect();
+			this.disposeEffect = null;
+		}
+		if (this.rootInstance) {
+			this.freeYogaNodes(this.rootInstance);
+			this.rootInstance = null;
+		}
+		this.terminal.clear();
+	}
 }
 
-export function render(vnode: VNode, terminal: Terminal) {
+export function render(createVNode: () => VNode, terminal: Terminal) {
 	const renderer = new Renderer(terminal);
-	renderer.render(vnode);
+	renderer.render(createVNode);
 	return {
-		rerender: (newVNode: VNode) => renderer.render(newVNode),
-		unmount: () => {
-			if (renderer.rootInstance) {
-				renderer.freeYogaNodes(renderer.rootInstance);
-				renderer.rootInstance = null;
-			}
-			terminal.clear();
-		},
+		rerender: () => renderer.render(createVNode),
+		unmount: () => renderer.unmount(),
 	};
 }

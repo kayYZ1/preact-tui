@@ -1,14 +1,17 @@
 import { formatText } from "../../core/utils/format-text";
-import type { Instance } from "../src/types";
+import type { Instance, Position, RenderContext, ElementRenderer } from "../src/types";
 
-export function renderText(instance: Instance): Array<{ x: number; y: number; text: string }> {
-	const formattedText = formatText(instance);
+type TextInstance = Extract<Instance, { type: "text" }>;
+
+export const renderText: ElementRenderer<TextInstance> = (instance, context): Position[] => {
+	const x = context.parentX + instance.yogaNode.getComputedLeft();
+	const y = context.parentY + instance.yogaNode.getComputedTop();
 
 	return [
 		{
-			x: Math.round(instance.yogaNode.getComputedLeft()),
-			y: Math.round(instance.yogaNode.getComputedTop()),
-			text: formattedText,
+			x: Math.round(x),
+			y: Math.round(y),
+			text: formatText(instance),
 		},
 	];
-}
+};

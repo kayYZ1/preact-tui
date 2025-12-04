@@ -1,12 +1,10 @@
-import type { Instance } from "../src/types";
+import type { Instance, Position, RenderContext, ElementRenderer } from "../src/types";
 
-export function renderBox(
-	instance: Instance,
-	renderInstance: (inst: Instance) => Array<{ x: number; y: number; text: string }>,
-): Array<{ x: number; y: number; text: string }> {
-	const positions: Array<{ x: number; y: number; text: string }> = [];
-	for (const child of instance.children) {
-		positions.push(...renderInstance(child));
-	}
-	return positions;
-}
+type BoxInstance = Extract<Instance, { type: "box" }>;
+
+export const renderBox: ElementRenderer<BoxInstance> = (instance, context): Position[] => {
+	const x = context.parentX + instance.yogaNode.getComputedLeft();
+	const y = context.parentY + instance.yogaNode.getComputedTop();
+
+	return instance.children.flatMap((child) => context.renderInstance(child, x, y));
+};
