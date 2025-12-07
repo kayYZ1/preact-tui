@@ -1,4 +1,4 @@
-# prtui
+# PRTUI
 
 To install dependencies:
 
