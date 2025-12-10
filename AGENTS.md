@@ -1,12 +1,14 @@
 # AGENTS.md
 
 ## Build/Lint/Test Commands
+
 - Install dependencies: `bun install`
 - Run the project: `bun run index.ts`
 - No lint or test scripts defined yet; add them to package.json as needed.
 - For a single test (if added): Use a test runner like Jest or Vitest, e.g., `bun test <test-file>`.
 
 ## Code Style Guidelines
+
 - **Language**: TypeScript with strict mode enabled.
 - **Imports**: Use ES modules; prefer relative imports for local files.
 - **Formatting**: Follow Prettier defaults if added; otherwise, use consistent indentation (2 spaces).

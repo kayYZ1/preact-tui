@@ -1,10 +1,36 @@
-import { Box, Text, Terminal, render, signal } from "../index";
+import { Box, Text, run, useSignal, useSignalEffect } from "../index";
 
 const frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-const frameIndex = signal(0);
-const status = signal("Loading...");
 
 function Spinner() {
+	const frameIndex = useSignal(0);
+	const status = useSignal("Loading...");
+
+	useSignalEffect(() => {
+		const spinnerInterval = setInterval(() => {
+			frameIndex.value = (frameIndex.value + 1) % frames.length;
+		}, 80);
+
+		const timeout1 = setTimeout(() => {
+			status.value = "Fetching data...";
+		}, 2000);
+
+		const timeout2 = setTimeout(() => {
+			status.value = "Almost done...";
+		}, 4000);
+
+		const timeout3 = setTimeout(() => {
+			status.value = "Complete! ✓";
+		}, 6000);
+
+		return () => {
+			clearInterval(spinnerInterval);
+			clearTimeout(timeout1);
+			clearTimeout(timeout2);
+			clearTimeout(timeout3);
+		};
+	});
+
 	return (
 		<Box flex flexDirection="column" gap={1}>
 			<Box flexDirection="row" gap={1}>
@@ -18,27 +44,4 @@ function Spinner() {
 	);
 }
 
-const term = new Terminal();
-const { unmount } = render(() => <Spinner />, term);
-
-setInterval(() => {
-	frameIndex.value = (frameIndex.value + 1) % frames.length;
-}, 80);
-
-setTimeout(() => {
-	status.value = "Fetching data...";
-}, 2000);
-
-setTimeout(() => {
-	status.value = "Almost done...";
-}, 4000);
-
-setTimeout(() => {
-	status.value = "Complete! ✓";
-}, 6000);
-
-process.on("SIGINT", () => {
-	unmount();
-	process.exit();
-});
-process.stdin.resume();
+run(() => <Spinner />);

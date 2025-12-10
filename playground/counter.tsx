@@ -1,8 +1,15 @@
-import { Box, Text, Terminal, render, signal } from "../index";
-
-const count = signal(0);
+import { Box, Text, run, useSignal, useSignalEffect } from "../index";
 
 function Counter() {
+	const count = useSignal(0);
+
+	useSignalEffect(() => {
+		const interval = setInterval(() => {
+			count.value++;
+		}, 1000);
+		return () => clearInterval(interval);
+	});
+
 	return (
 		<Box flex flexDirection="column" gap={1}>
 			<Text color="cyan" bold>
@@ -19,15 +26,4 @@ function Counter() {
 	);
 }
 
-const term = new Terminal();
-const { unmount } = render(() => <Counter />, term);
-
-setInterval(() => {
-	count.value++;
-}, 1000);
-
-process.on("SIGINT", () => {
-	unmount();
-	process.exit();
-});
-process.stdin.resume();
+run(() => <Counter />);

@@ -1,8 +1,15 @@
-import { Box, Text, Terminal, render, signal } from "../index";
-
-const time = signal(new Date().toLocaleTimeString());
+import { Box, Text, run, useSignal, useSignalEffect } from "../index";
 
 function Clock() {
+	const time = useSignal(new Date().toLocaleTimeString());
+
+	useSignalEffect(() => {
+		const interval = setInterval(() => {
+			time.value = new Date().toLocaleTimeString();
+		}, 1000);
+		return () => clearInterval(interval);
+	});
+
 	return (
 		<Box flex flexDirection="column" alignItems="center" gap={1}>
 			<Text color="magenta" bold>
@@ -19,15 +26,4 @@ function Clock() {
 	);
 }
 
-const term = new Terminal();
-const { unmount } = render(() => <Clock />, term);
-
-setInterval(() => {
-	time.value = new Date().toLocaleTimeString();
-}, 1000);
-
-process.on("SIGINT", () => {
-	unmount();
-	process.exit();
-});
-process.stdin.resume();
+run(() => <Clock />);

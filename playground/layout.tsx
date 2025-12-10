@@ -1,4 +1,4 @@
-import { Box, Text, Terminal, render } from "../index";
+import { Box, Text, run } from "../index";
 
 function Header() {
 	return (
@@ -48,11 +48,4 @@ function App() {
 	);
 }
 
-const term = new Terminal();
-const { unmount } = render(() => <App />, term);
-
-process.on("SIGINT", () => {
-	unmount();
-	process.exit();
-});
-process.stdin.resume();
+run(() => <App />);

@@ -4,6 +4,7 @@ import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
 import type { Instance, Position, RenderContext } from "./src/types";
 import { getRenderer } from "./renderers";
+import { resetHooks, cleanupEffects } from "./hooks";
 
 export class Renderer {
 	terminal: Terminal;
@@ -163,6 +164,7 @@ export class Renderer {
 
 	render(createVNode: () => VNode) {
 		this.disposeEffect = effect(() => {
+			resetHooks();
 			const vnode = createVNode();
 			this.commitRender(vnode);
 		});
@@ -177,6 +179,7 @@ export class Renderer {
 			this.freeYogaNodes(this.rootInstance);
 			this.rootInstance = null;
 		}
+		cleanupEffects();
 		this.terminal.clear();
 	}
 }
@@ -188,4 +191,18 @@ export function render(createVNode: () => VNode, terminal: Terminal) {
 		rerender: () => renderer.render(createVNode),
 		unmount: () => renderer.unmount(),
 	};
+}
+
+export function run(createVNode: () => VNode) {
+	const terminal = new Terminal();
+	const { unmount } = render(createVNode, terminal);
+
+	process.on("SIGINT", () => {
+		unmount();
+		process.exit();
+	});
+
+	process.stdin.resume();
+
+	return { unmount };
 }
