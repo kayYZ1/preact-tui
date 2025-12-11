@@ -16,11 +16,9 @@ function Clock() {
 				⏰ Terminal Clock
 			</Text>
 			<Box flexDirection="row" gap={1}>
-				<Text color="white">[</Text>
 				<Text color="green" bold>
 					{time.value}
 				</Text>
-				<Text color="white">]</Text>
 			</Box>
 		</Box>
 	);
