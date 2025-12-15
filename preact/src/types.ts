@@ -38,6 +38,12 @@ export interface BoxProps extends BaseProps {
 	alignItems?: "flex-start" | "center" | "flex-end" | "stretch" | "baseline";
 	/** Whether flex items wrap */
 	flexWrap?: "wrap" | "wrap-reverse" | "nowrap";
+	/** Border of the element */
+	border?: "straight" | "dash";
+	/** Thickness of the border (default: 1) */
+	borderWidth?: number;
+	/** Color of the border */
+	borderColor?: string;
 }
 
 export interface TextProps extends BaseProps {

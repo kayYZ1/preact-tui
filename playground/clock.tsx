@@ -12,10 +12,12 @@ function Clock() {
 
 	return (
 		<Box flex flexDirection="column" alignItems="center" gap={1}>
-			<Text color="magenta" bold>
-				⏰ Terminal Clock
-			</Text>
-			<Box flexDirection="row" gap={1}>
+			<Box border="straight" borderColor="magenta" borderWidth={2} padding={1}>
+				<Text color="magenta" bold>
+					Terminal Clock
+				</Text>
+			</Box>
+			<Box border="dash" borderColor="green" padding={1}>
 				<Text color="green" bold>
 					{time.value}
 				</Text>

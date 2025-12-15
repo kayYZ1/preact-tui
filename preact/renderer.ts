@@ -51,7 +51,10 @@ export class Renderer {
 			const text = instance.props.children || "";
 			instance.yogaNode.setWidth(text.length);
 			instance.yogaNode.setHeight(1);
-		} else {
+			// Text
+		}
+
+		if (instance.type === "box") {
 			if (instance.props.flex) {
 				instance.yogaNode.setFlex(Number(instance.props.flex));
 			}
@@ -122,6 +125,11 @@ export class Renderer {
 
 			if (instance.props.width) instance.yogaNode.setWidth(instance.props.width);
 			if (instance.props.height) instance.yogaNode.setHeight(instance.props.height);
+
+			if (instance.props.border) {
+				instance.yogaNode.setBorder(Y.EDGE_ALL, instance.props.borderWidth ?? 1);
+			}
+			//Box
 		}
 
 		const children = Array.isArray(vnode.props.children)
