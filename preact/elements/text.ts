@@ -1,9 +1,9 @@
-import { formatText } from "../../core/utils/format-text";
-import type { Instance, Position, RenderContext, ElementRenderer } from "../src/types";
+import { formatText } from "../../core/primitives/format-text";
+import type { Instance, Position, RenderContext, ElementHandler } from "../src/types";
 
 type TextInstance = Extract<Instance, { type: "text" }>;
 
-export const renderText: ElementRenderer<TextInstance> = (instance, context): Position[] => {
+export const textElement: ElementHandler<TextInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 

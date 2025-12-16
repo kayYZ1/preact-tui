@@ -1,9 +1,9 @@
-import type { Instance, Position, ElementRenderer } from "../src/types";
-import { drawBox } from "../../core/utils/draw-box";
+import type { Instance, Position, ElementHandler } from "../src/types";
+import { drawBox } from "../../core/primitives/draw-box";
 
 type BoxInstance = Extract<Instance, { type: "box" }>;
 
-export const renderBox: ElementRenderer<BoxInstance> = (instance, context): Position[] => {
+export const boxElement: ElementHandler<BoxInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 	const positions: Position[] = [];
