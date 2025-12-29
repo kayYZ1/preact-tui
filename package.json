@@ -1,6 +1,5 @@
 {
 	"name": "prtui",
-	"module": "index.ts",
 	"type": "module",
 	"devDependencies": {
 		"@biomejs/biome": "2.2.6",
@@ -16,9 +15,9 @@
 	},
 	"scripts": {
 		"biome:write": "bun x biome format --write",
-		"playground:counter": "bun run playground/counter.tsx",
-		"playground:clock": "bun run playground/clock.tsx",
-		"playground:layout": "bun run playground/layout.tsx",
-		"playground:spinner": "bun run playground/spinner.tsx"
+		"tui:playground:counter": "bun run tui/playground/counter.tsx",
+		"tui:playground:clock": "bun run tui/playground/clock.tsx",
+		"tui:playground:layout": "bun run tui/playground/layout.tsx",
+		"tui:playground:spinner": "bun run tui/playground/spinner.tsx"
 	}
 }

@@ -28,12 +28,26 @@ function Sidebar() {
 
 function Content() {
 	return (
-		<Box flexDirection="column" gap={1} padding={1} border="straight" borderColor="green" borderWidth={2}>
+		<Box
+			flexDirection="row"
+			flex={1}
+			padding={1}
+			border="straight"
+			borderColor="green"
+			borderWidth={2}
+			flexWrap="wrap"
+		>
 			<Text color="green" bold>
 				Welcome!
 			</Text>
-			<Text color="white">This is a layout example showing</Text>
-			<Text color="white">how to compose components.</Text>
+			<Text color="white">
+				Loremlorelloremlororaosdasdasdasdsadads Loremlorelloremlororaosdasdasdasdsadads
+				Loremlorelloremlororaosdasdasdasdsadads Loremlorelloremlororaosdasdasdasdsadads
+				Loremlorelloremlororaosdasdasdasdsadads Loremlorelloremlororaosdasdasdasdsadads
+				Loremlorelloremlororaosdasdasdasdsadads Loremlorelloremlororaosdasdasdasdsadads
+				Loremlorelloremlororaosdasdasdasdsadads Loremlorelloremlororaosdasdasdasdsadads
+				Loremlorelloremlororaosdasdasdasdsadads
+			</Text>
 		</Box>
 	);
 }
@@ -52,7 +66,7 @@ function App() {
 	return (
 		<Box flex flexDirection="column" gap={1}>
 			<Header />
-			<Box flexDirection="row" gap={2}>
+			<Box flexDirection="row" justifyContent="space-between" gap={2}>
 				<Sidebar />
 				<Content />
 			</Box>

@@ -4,7 +4,7 @@ import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
 import type { Instance, Position, RenderContext } from "./src/types";
 import { getElement } from "./elements";
-import { resetHooks, cleanupEffects } from "./hooks";
+import { resetHooks, cleanupEffects, nextComponent } from "./hooks";
 
 export class Renderer {
 	terminal: Terminal;
@@ -35,6 +35,7 @@ export class Renderer {
 
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
+			nextComponent();
 			const childVNode = (vnode.type as any)(vnode.props);
 			return this.createInstanceTree(childVNode);
 		}
