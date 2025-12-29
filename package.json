@@ -15,6 +15,8 @@
 	},
 	"scripts": {
 		"biome:write": "bun x biome format --write",
+		"biome:check": "bun x biome check",
+		"test": "bun test",
 		"tui:playground:counter": "bun run tui/playground/counter.tsx",
 		"tui:playground:clock": "bun run tui/playground/clock.tsx",
 		"tui:playground:layout": "bun run tui/playground/layout.tsx",
