@@ -1,4 +1,4 @@
-import type { Instance, ElementHandler } from "../src/types";
+import type { ElementHandler, Instance } from "../src/types";
 import { boxElement } from "./box";
 import { textElement } from "./text";
 

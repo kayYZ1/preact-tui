@@ -1,4 +1,4 @@
-import { Box, Text, run, useSignal, useSignalEffect } from "../index";
+import { Box, run, Text, useSignal, useSignalEffect } from "../index";
 
 function Clock() {
 	const time = useSignal(new Date().toLocaleTimeString());

@@ -1,10 +1,10 @@
-import { type VNode } from "preact";
 import { effect } from "@preact/signals";
+import type { VNode } from "preact";
 import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
-import type { Instance, Position, RenderContext } from "./src/types";
 import { getElement } from "./elements";
-import { resetHooks, cleanupEffects, nextComponent } from "./hooks";
+import { cleanupEffects, nextComponent, resetHooks } from "./hooks";
+import type { Instance, Position, RenderContext } from "./src/types";
 
 export class Renderer {
 	terminal: Terminal;

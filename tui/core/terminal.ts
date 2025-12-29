@@ -113,7 +113,7 @@ export class Terminal {
 
 				if (this.isFirstRender || current.char !== previous.char || current.style !== previous.style) {
 					output += `\x1b[${y + 1};${x + 1}H`;
-					output += current.style + current.char + "\x1b[0m";
+					output += `${current.style + current.char}\x1b[0m`;
 				}
 			}
 		}

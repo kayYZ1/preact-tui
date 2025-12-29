@@ -1,4 +1,4 @@
-import { expect, test, describe, mock } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import { Terminal } from "./terminal";
 
 describe("Terminal", () => {

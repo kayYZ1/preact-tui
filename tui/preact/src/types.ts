@@ -1,4 +1,4 @@
-import Y from "yoga-layout";
+import type Y from "yoga-layout";
 
 export interface Cell {
 	char: string;

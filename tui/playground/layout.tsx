@@ -1,4 +1,4 @@
-import { Box, Text, run } from "../index";
+import { Box, run, Text } from "../index";
 
 function Header() {
 	return (

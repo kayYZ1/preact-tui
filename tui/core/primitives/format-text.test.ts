@@ -1,6 +1,6 @@
-import { expect, test, describe } from "bun:test";
-import { formatText } from "./format-text";
+import { describe, expect, test } from "bun:test";
 import Y from "yoga-layout";
+import { formatText } from "./format-text";
 
 describe("formatText", () => {
 	test("returns empty string for non-text instances", () => {

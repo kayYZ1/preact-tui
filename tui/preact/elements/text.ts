@@ -1,5 +1,5 @@
 import { formatText } from "../../core/primitives/format-text";
-import type { Instance, Position, RenderContext, ElementHandler } from "../src/types";
+import type { ElementHandler, Instance, Position } from "../src/types";
 
 type TextInstance = Extract<Instance, { type: "text" }>;
 

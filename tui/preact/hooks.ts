@@ -1,4 +1,4 @@
-import { signal, effect, type Signal } from "@preact/signals";
+import { effect, type Signal, signal } from "@preact/signals";
 
 const signalCache = new Map<string, Signal<unknown>>();
 const effectCleanups = new Map<string, () => void>();
@@ -23,7 +23,7 @@ export function useSignal<T>(initialValue: T): Signal<T> {
 	return signalCache.get(key) as Signal<T>;
 }
 
-export function useSignalEffect(fn: () => void | (() => void)): void {
+export function useSignalEffect(fn: () => undefined | (() => void)): void {
 	const key = `${componentId}-${hookIndex++}`;
 	if (!effectCleanups.has(key)) {
 		const cleanup = effect(() => {
