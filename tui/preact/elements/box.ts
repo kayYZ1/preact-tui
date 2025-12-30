@@ -1,5 +1,5 @@
-import type { ElementHandler, Instance, Position } from "../src/types";
 import { drawBox } from "@/tui/core/primitives/draw-box";
+import type { ElementHandler, Instance, Position } from "../src/types";
 
 type BoxInstance = Extract<Instance, { type: "box" }>;
 
