@@ -12,12 +12,12 @@ function Counter() {
 
 	return (
 		<Box flex flexDirection="column" gap={1}>
-			<Box border="straight" borderColor="cyan" padding={1}>
+			<Box border="bold" borderColor="cyan" padding={1}>
 				<Text color="cyan" bold>
 					Counter Example
 				</Text>
 			</Box>
-			<Box border="dash" borderColor="yellow" padding={1}>
+			<Box border="double" borderColor="yellow" padding={1}>
 				<Box flexDirection="row" gap={2}>
 					<Text color="white">Count:</Text>
 					<Text color="yellow" bold>

@@ -43,10 +43,8 @@ export interface BoxProps extends BaseProps {
 	alignItems?: "flex-start" | "center" | "flex-end" | "stretch" | "baseline";
 	/** Whether flex items wrap */
 	flexWrap?: "wrap" | "wrap-reverse" | "nowrap";
-	/** Border of the element */
-	border?: "straight" | "dash";
-	/** Thickness of the border (default: 1) */
-	borderWidth?: number;
+	/** Border style of the element */
+	border?: "single" | "double" | "round" | "bold" | "dash" | "block";
 	/** Color of the border */
 	borderColor?: string;
 }

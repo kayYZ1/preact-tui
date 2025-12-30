@@ -11,8 +11,7 @@ export const boxElement: ElementHandler<BoxInstance> = (instance, context): Posi
 	if (instance.props.border) {
 		const w = instance.yogaNode.getComputedWidth();
 		const h = instance.yogaNode.getComputedHeight();
-		const thickness = instance.props.borderWidth ?? 1;
-		positions.push(...drawBox(x, y, w, h, instance.props.border, instance.props.borderColor, thickness));
+		positions.push(...drawBox(x, y, w, h, instance.props.border, instance.props.borderColor));
 	}
 
 	positions.push(...instance.children.flatMap((child) => context.renderInstance(child, x, y)));

@@ -12,7 +12,7 @@ function Clock() {
 
 	return (
 		<Box flex flexDirection="column" alignItems="center" gap={1}>
-			<Box border="straight" borderColor="magenta" borderWidth={2} padding={1}>
+			<Box border="round" borderColor="magenta" padding={1}>
 				<Text color="magenta" bold>
 					Terminal Clock
 				</Text>

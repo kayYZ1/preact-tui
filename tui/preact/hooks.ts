@@ -7,6 +7,7 @@ let componentId = 0;
 let hookIndex = 0;
 
 export function resetHooks() {
+	componentId = 0;
 	hookIndex = 0;
 }
 

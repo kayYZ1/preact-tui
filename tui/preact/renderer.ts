@@ -128,7 +128,7 @@ export class Renderer {
 			if (instance.props.height) instance.yogaNode.setHeight(instance.props.height);
 
 			if (instance.props.border) {
-				instance.yogaNode.setBorder(Y.EDGE_ALL, instance.props.borderWidth ?? 1);
+				instance.yogaNode.setBorder(Y.EDGE_ALL, 1);
 			}
 			//Box
 		}
