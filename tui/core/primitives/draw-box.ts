@@ -1,4 +1,4 @@
-import type { Position } from "../../preact/src/types";
+import type { Position } from "@/tui/preact/src/types";
 
 type BorderStyle = "straight" | "dash";
 

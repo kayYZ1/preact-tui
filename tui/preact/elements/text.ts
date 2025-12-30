@@ -1,5 +1,5 @@
-import { formatText } from "../../core/primitives/format-text";
 import type { ElementHandler, Instance, Position } from "../src/types";
+import { formatText } from "@/tui/core/primitives/format-text";
 
 type TextInstance = Extract<Instance, { type: "text" }>;
 

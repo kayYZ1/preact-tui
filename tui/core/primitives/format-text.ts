@@ -1,4 +1,4 @@
-import type { Instance } from "../../preact/src/types";
+import type { Instance } from "@/tui/preact/src/types";
 
 export const formatText = (instance: Instance): string => {
 	if (instance.type !== "text") return "";
