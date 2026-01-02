@@ -1,4 +1,5 @@
-import { Box, run, Text } from "../index";
+import { run } from "@/tui/preact";
+import { Box, Text } from "@/tui/preact/components";
 
 function Header() {
 	return (

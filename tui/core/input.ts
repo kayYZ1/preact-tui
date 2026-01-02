@@ -63,7 +63,12 @@ class InputManager {
 			return { key: "tab", ctrl: false, meta: false, shift: false };
 		}
 		if (code >= 1 && code <= 26) {
-			return { key: String.fromCharCode(code + 96), ctrl: true, meta: false, shift: false };
+			return {
+				key: String.fromCharCode(code + 96),
+				ctrl: true,
+				meta: false,
+				shift: false,
+			};
 		}
 
 		return { key: char, ctrl: false, meta: false, shift: false };

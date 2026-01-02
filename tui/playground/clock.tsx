@@ -1,4 +1,6 @@
-import { Box, run, Text, useSignal, useSignalEffect } from "../index";
+import { run } from "@/tui/preact";
+import { Box, Text } from "@/tui/preact/components";
+import { useSignal, useSignalEffect } from "@/tui/preact/hooks";
 
 function Clock() {
 	const time = useSignal(new Date().toLocaleTimeString());

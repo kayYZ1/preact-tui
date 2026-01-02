@@ -47,6 +47,10 @@ export interface BoxProps extends BaseProps {
 	border?: "single" | "double" | "round" | "bold" | "dash" | "block";
 	/** Color of the border */
 	borderColor?: string;
+	/** Label embedded in top-left border (like vim mode indicator) */
+	borderLabel?: string;
+	/** Color of the border label */
+	borderLabelColor?: string;
 }
 
 export interface TextProps extends BaseProps {

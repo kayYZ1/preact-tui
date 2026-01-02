@@ -4,7 +4,7 @@ import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
 import { getElement } from "./elements";
 import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
-import { cleanupEffects, nextComponent, resetHooks } from "./hooks";
+import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals";
 import type { Instance, Position, RenderContext } from "./src/types";
 
 export class Renderer {
