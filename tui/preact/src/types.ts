@@ -62,6 +62,25 @@ export interface TextProps extends BaseProps {
 	strikethrough?: boolean;
 }
 
+export interface TextInputProps extends BaseProps {
+	/** Current value of the input */
+	value?: string;
+	/** Callback when value changes */
+	onChange?: (value: string) => void;
+	/** Placeholder text when empty */
+	placeholder?: string;
+	/** Width of the input field */
+	width?: number;
+	/** Whether the input is focused */
+	focused?: boolean;
+	/** Cursor position within the input */
+	cursorPosition?: number;
+	/** Text color */
+	color?: string;
+	/** Placeholder text color */
+	placeholderColor?: string;
+}
+
 export type Instance =
 	| {
 			/** Type of the instance */
@@ -78,6 +97,16 @@ export type Instance =
 			type: "text";
 			/** Properties for the text */
 			props: TextProps;
+			/** Child instances */
+			children: Instance[];
+			/** Yoga layout node */
+			yogaNode: ReturnType<typeof Y.Node.create>;
+	  }
+	| {
+			/** Type of the instance */
+			type: "textInput";
+			/** Properties for the text input */
+			props: TextInputProps;
 			/** Child instances */
 			children: Instance[];
 			/** Yoga layout node */

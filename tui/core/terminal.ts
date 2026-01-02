@@ -24,12 +24,16 @@ export class Terminal {
 		);
 	}
 
-	private hideCursor() {
+	hideCursor() {
 		this.stdout.write("\x1b[?25l");
 	}
 
-	private showCursor() {
+	showCursor() {
 		this.stdout.write("\x1b[?25h");
+	}
+
+	setCursorPosition(x: number, y: number) {
+		this.stdout.write(`\x1b[${y + 1};${x + 1}H`);
 	}
 
 	private clearScreen() {

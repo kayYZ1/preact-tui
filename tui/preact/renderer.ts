@@ -3,6 +3,7 @@ import type { VNode } from "preact";
 import Y from "yoga-layout";
 import { Terminal } from "../core/terminal";
 import { getElement } from "./elements";
+import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
 import { cleanupEffects, nextComponent, resetHooks } from "./hooks";
 import type { Instance, Position, RenderContext } from "./src/types";
 
@@ -40,19 +41,24 @@ export class Renderer {
 			return this.createInstanceTree(childVNode);
 		}
 
-		const type = typeof vnode.type === "string" ? (vnode.type as "box" | "text") : "box";
-		const instance: Instance = {
+		const type = typeof vnode.type === "string" ? vnode.type : "box";
+		const instance = {
 			type,
 			props: vnode.props,
-			children: [],
+			children: [] as Instance[],
 			yogaNode: Y.Node.create(),
-		};
+		} as Instance;
 
 		if (instance.type === "text") {
 			const text = instance.props.children || "";
 			instance.yogaNode.setWidth(text.length);
 			instance.yogaNode.setHeight(1);
-			// Text
+		}
+
+		if (instance.type === "textInput") {
+			const width = instance.props.width || 20;
+			instance.yogaNode.setWidth(width);
+			instance.yogaNode.setHeight(1);
 		}
 
 		if (instance.type === "box") {
@@ -163,12 +169,21 @@ export class Renderer {
 		if (this.rootInstance) {
 			this.freeYogaNodes(this.rootInstance);
 		}
+		clearPendingCursor();
 		this.rootInstance = this.createInstanceTree(vnode);
 		this.rootInstance.yogaNode.setWidth(this.terminal.width);
 		this.rootInstance.yogaNode.setHeight(this.terminal.height);
 		this.rootInstance.yogaNode.calculateLayout(this.terminal.width, this.terminal.height, Y.DIRECTION_LTR);
 		const positions = this.renderInstance(this.rootInstance, 0, 0);
 		this.terminal.render(positions);
+
+		const cursor = getPendingCursor();
+		if (cursor?.visible) {
+			this.terminal.showCursor();
+			this.terminal.setCursorPosition(cursor.x, cursor.y);
+		} else {
+			this.terminal.hideCursor();
+		}
 	}
 
 	render(createVNode: () => VNode) {
@@ -206,12 +221,24 @@ export function run(createVNode: () => VNode) {
 	const terminal = new Terminal();
 	const { unmount } = render(createVNode, terminal);
 
-	process.on("SIGINT", () => {
-		unmount();
-		process.exit();
+	const { inputManager } = require("../core/input");
+	inputManager.start();
+
+	const cleanup = inputManager.onKey((event: { key: string; ctrl: boolean }) => {
+		if (event.ctrl && event.key === "c") {
+			cleanup();
+			inputManager.stop();
+			unmount();
+			process.exit();
+		}
 	});
 
-	process.stdin.resume();
-
-	return { unmount };
+	return {
+		unmount: () => {
+			cleanup();
+			inputManager.stop();
+			unmount();
+		},
+		terminal,
+	};
 }
