@@ -1,11 +1,12 @@
 import { effect } from "@preact/signals";
 import type { VNode } from "preact";
 import Y from "yoga-layout";
+import { inputManager } from "../core/input";
 import { Terminal } from "../core/terminal";
 import { getElement } from "./elements";
 import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
 import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals";
-import type { Instance, Position, RenderContext } from "./src/types";
+import type { Instance, Position, RenderContext } from "./types/index";
 
 export class Renderer {
 	terminal: Terminal;
@@ -221,7 +222,6 @@ export function run(createVNode: () => VNode) {
 	const terminal = new Terminal();
 	const { unmount } = render(createVNode, terminal);
 
-	const { inputManager } = require("../core/input");
 	inputManager.start();
 
 	const cleanup = inputManager.onKey((event: { key: string; ctrl: boolean }) => {
