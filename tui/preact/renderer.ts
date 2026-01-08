@@ -1,6 +1,7 @@
 import { effect } from "@preact/signals";
 import type { VNode } from "preact";
 import Y from "yoga-layout";
+import { wrapText } from "../core/primitives/wrap-text";
 import { inputManager } from "../core/input";
 import { Terminal } from "../core/terminal";
 import { getElement } from "./elements";
@@ -52,14 +53,27 @@ export class Renderer {
 
 		if (instance.type === "text") {
 			const text = instance.props.children || "";
-			instance.yogaNode.setWidth(text.length);
-			instance.yogaNode.setHeight(1);
+			const width = instance.props.width;
+			const height = instance.props.height;
+
+			if (width) {
+				// If width is specified, calculate wrapped height
+				const lines = wrapText(text, width);
+				instance.yogaNode.setWidth(width);
+				instance.yogaNode.setHeight(Math.min(lines.length, height || Infinity));
+			} else {
+				// Height will be calculated based on actual wrapping during render
+				if (height) {
+					instance.yogaNode.setHeight(height);
+				}
+			}
 		}
 
 		if (instance.type === "textInput") {
 			const width = instance.props.width || 20;
+			const height = instance.props.height || 1;
 			instance.yogaNode.setWidth(width);
-			instance.yogaNode.setHeight(1);
+			instance.yogaNode.setHeight(height);
 		}
 
 		if (instance.type === "box") {
