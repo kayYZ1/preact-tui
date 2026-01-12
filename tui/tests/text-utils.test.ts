@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import { signal } from "@preact/signals-core";
 import {
-	insertChar,
 	deleteBackward,
 	deleteForward,
+	insertChar,
 	moveCursor,
 	setCursor,
 	type TextState,

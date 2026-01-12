@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { jsx, jsxs, Fragment } from "../preact/jsx-runtime";
+import { Fragment, jsx, jsxs } from "../preact/jsx-runtime";
 
 describe("jsx", () => {
 	it("creates VNode with string type", () => {

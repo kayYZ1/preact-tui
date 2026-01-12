@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { wrapText, splitText } from "../core/primitives/wrap-text";
+import { splitText, wrapText } from "../core/primitives/wrap-text";
 
 describe("wrapText", () => {
 	it("wraps long text at word boundaries", () => {

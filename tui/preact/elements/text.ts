@@ -1,5 +1,5 @@
-import { wrapText } from "@/tui/core/primitives/wrap-text";
 import { formatText } from "@/tui/core/primitives/format-text";
+import { wrapText } from "@/tui/core/primitives/wrap-text";
 import type { ElementHandler, Instance, Position } from "../types/index";
 
 type TextInstance = Extract<Instance, { type: "text" }>;

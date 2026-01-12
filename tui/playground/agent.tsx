@@ -1,7 +1,7 @@
-import { useSignal } from "@/tui/preact/hooks/signals";
-import { useTextInput, type VimMode } from "@/tui/preact/hooks/text-input";
 import { run } from "@/tui/preact";
 import { Box, Text, TextInput } from "@/tui/preact/components";
+import { useSignal } from "@/tui/preact/hooks/signals";
+import { useTextInput, type VimMode } from "@/tui/preact/hooks/text-input";
 
 interface Message {
 	role: "user" | "agent";

@@ -1,8 +1,9 @@
 import type { Signal } from "@preact/signals-core";
 import { inputManager, type KeyEvent } from "../../core/input";
 import { getHookKey, hasCleanup, setCleanup } from "./signals";
-import { deleteBackward, deleteForward, insertChar, type TextState } from "./text-utils";
-import { handleEscape, handleNormalMode, type VimContext, type VimMode } from "./vim-bindings";
+import { deleteBackward, deleteForward, insertChar, moveCursor, setCursor, type TextState } from "./text-utils";
+
+export type VimMode = "NORMAL" | "INSERT";
 
 interface UseTextInputOptions {
 	value: Signal<string>;
@@ -16,13 +17,11 @@ interface UseTextInputOptions {
 }
 
 function handleInsertMode(event: KeyEvent, state: TextState, options: UseTextInputOptions): boolean {
-	// Handle escape when vim mode is active
 	if (options.mode && event.key === "escape") {
-		return handleEscape({
-			state,
-			mode: options.mode,
-			onModeChange: options.onModeChange,
-		});
+		options.mode.value = "NORMAL";
+		options.onModeChange?.("NORMAL");
+		moveCursor(state, -1);
+		return true;
 	}
 
 	if (event.key === "enter") {
@@ -51,41 +50,97 @@ function handleInsertMode(event: KeyEvent, state: TextState, options: UseTextInp
 	return false;
 }
 
-export function useTextInput(options: UseTextInputOptions) {
-  const key = getHookKey("input-");
+function handleNormalMode(event: KeyEvent, state: TextState, options: UseTextInputOptions): boolean {
+	const mode = options.mode!;
+	const value = state.value.value;
+	const cursor = state.cursorPosition.value;
 
-  if (!hasCleanup(key) && options.focused !== false) {
-    const state: TextState = { value: options.value, cursorPosition: options.cursorPosition };
+	const enterInsert = (cursorDelta = 0) => {
+		mode.value = "INSERT";
+		options.onModeChange?.("INSERT");
+		if (cursorDelta) moveCursor(state, cursorDelta);
+	};
 
-    const cleanup = inputManager.onKey((event: KeyEvent) => {
-      if (options.focused === false) return;
-
-      // Vim mode: check current mode
-      if (options.mode) {
-        if (options.mode.value === "NORMAL") {
-          const vimCtx: VimContext = {
-            state,
-            mode: options.mode,
-            onChange: options.onChange,
-            onModeChange: options.onModeChange,
-          };
-          handleNormalMode(event, vimCtx);
-          return;
-        }
-      }
-
-      // INSERT mode (or no vim mode)
-      handleInsertMode(event, state, options);
-    });
-
-    setCleanup(key, cleanup);
-  }
-
-  return {
-    value: options.value,
-    cursorPosition: options.cursorPosition,
-    mode: options.mode,
-  };
+	switch (event.key) {
+		case "i":
+			enterInsert();
+			return true;
+		case "a":
+			enterInsert(cursor < value.length ? 1 : 0);
+			return true;
+		case "A":
+			mode.value = "INSERT";
+			options.onModeChange?.("INSERT");
+			setCursor(state, value.length);
+			return true;
+		case "I":
+			mode.value = "INSERT";
+			options.onModeChange?.("INSERT");
+			setCursor(state, 0);
+			return true;
+		case "h":
+			moveCursor(state, -1);
+			return true;
+		case "l":
+			if (cursor < value.length - 1) moveCursor(state, 1);
+			return true;
+		case "0":
+			setCursor(state, 0);
+			return true;
+		case "$":
+			setCursor(state, Math.max(0, value.length - 1));
+			return true;
+		case "w": {
+			const rest = value.slice(cursor);
+			const match = rest.match(/^\s*\S*\s*/);
+			if (match?.[0]) {
+				setCursor(state, Math.min(cursor + match[0].length, value.length - 1));
+			}
+			return true;
+		}
+		case "b": {
+			const before = value.slice(0, cursor);
+			const match = before.match(/\S+\s*$/);
+			setCursor(state, match ? cursor - match[0].length : 0);
+			return true;
+		}
+		case "x": {
+			const newValue = deleteForward(state);
+			if (newValue !== null) {
+				options.onChange?.(newValue);
+				if (cursor >= newValue.length && cursor > 0) {
+					moveCursor(state, -1);
+				}
+			}
+			return true;
+		}
+		default:
+			return false;
+	}
 }
 
-export type { VimMode };
+export function useTextInput(options: UseTextInputOptions) {
+	const key = getHookKey("input-");
+
+	if (!hasCleanup(key) && options.focused !== false) {
+		const state: TextState = { value: options.value, cursorPosition: options.cursorPosition };
+
+		const cleanup = inputManager.onKey((event: KeyEvent) => {
+			if (options.focused === false) return;
+
+			if (options.mode?.value === "NORMAL") {
+				handleNormalMode(event, state, options);
+			} else {
+				handleInsertMode(event, state, options);
+			}
+		});
+
+		setCleanup(key, cleanup);
+	}
+
+	return {
+		value: options.value,
+		cursorPosition: options.cursorPosition,
+		mode: options.mode,
+	};
+}
