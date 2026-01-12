@@ -28,7 +28,7 @@ declare global {
 		}
 		type Element = VNode;
 		interface ElementChildrenAttribute {
-			children: {};
+			children: unknown;
 		}
 	}
 }

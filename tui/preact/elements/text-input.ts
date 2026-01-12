@@ -22,8 +22,9 @@ export function clearPendingCursor() {
 export const textInputElement: ElementHandler<TextInputInstance> = (instance, context): Position[] => {
   const x = context.parentX + instance.yogaNode.getComputedLeft();
   const y = context.parentY + instance.yogaNode.getComputedTop();
-  const width = instance.yogaNode.getComputedWidth();
+  const widthNum = instance.yogaNode.getComputedWidth();
   const height = instance.yogaNode.getComputedHeight();
+  const width = Math.ceil(widthNum);
 
   const value = instance.props.value || "";
   const placeholder = instance.props.placeholder || "";
@@ -31,9 +32,13 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
   const isPlaceholder = !value && placeholder;
   const cursorPos = instance.props.cursorPosition ?? value.length;
 
+  // Calculate cursor line and column based on width
+  const cursorLine = Math.floor(cursorPos / width);
+  const cursorCol = cursorPos % width;
+
   // Split text into lines based on width (character-based for inputs)
   const textToSplit = displayText || "";
-  const lines = splitText(textToSplit, Math.ceil(width));
+  const lines = splitText(textToSplit, width);
 
   // Trim or pad lines to fit height
   const displayLines = lines.slice(0, height);
@@ -42,7 +47,6 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
   }
 
   const positions: Position[] = [];
-  let charCount = 0;
 
   for (let lineIdx = 0; lineIdx < displayLines.length; lineIdx++) {
     const line = displayLines[lineIdx] ?? "";
@@ -62,22 +66,15 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
       y: Math.round(y) + lineIdx,
       text: formattedText,
     });
+  }
 
-    // Calculate cursor position if it's on this line
-    if (instance.props.focused) {
-      const lineStartPos = charCount;
-      const lineEndPos = charCount + line.length;
-
-      if (cursorPos >= lineStartPos && cursorPos <= lineEndPos) {
-        pendingCursor = {
-          x: Math.round(x) + Math.min(cursorPos - lineStartPos, width - 1),
-          y: Math.round(y) + lineIdx,
-          visible: true,
-        };
-      }
-    }
-
-    charCount += line.length;
+  // Set cursor position if focused and within visible area
+  if (instance.props.focused && cursorLine < height) {
+    pendingCursor = {
+      x: Math.round(x) + cursorCol,
+      y: Math.round(y) + cursorLine,
+      visible: true,
+    };
   }
 
   return positions;
