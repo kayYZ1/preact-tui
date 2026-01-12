@@ -1,4 +1,4 @@
-import { wrapText } from "@/tui/core/primitives/wrap-text";
+import { splitText } from "@/tui/core/primitives/wrap-text";
 import type { ElementHandler, Instance, Position } from "../types/index";
 
 type TextInputInstance = Extract<Instance, { type: "textInput" }>;
@@ -31,9 +31,9 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
   const isPlaceholder = !value && placeholder;
   const cursorPos = instance.props.cursorPosition ?? value.length;
 
-  // Split text into lines based on width and height
+  // Split text into lines based on width (character-based for inputs)
   const textToSplit = displayText || "";
-  const lines = height > 1 ? wrapText(textToSplit, Math.ceil(width)) : [textToSplit];
+  const lines = splitText(textToSplit, Math.ceil(width));
 
   // Trim or pad lines to fit height
   const displayLines = lines.slice(0, height);
@@ -45,7 +45,7 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
   let charCount = 0;
 
   for (let lineIdx = 0; lineIdx < displayLines.length; lineIdx++) {
-    let line = displayLines[lineIdx];
+    const line = displayLines[lineIdx] ?? "";
 
     let formattedText = line.slice(0, width).padEnd(width, " ");
 

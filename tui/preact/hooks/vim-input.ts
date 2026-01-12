@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals";
+import type { Signal } from "@preact/signals-core";
 import { inputManager, type KeyEvent } from "../../core/input";
 import { getHookKey, hasCleanup, setCleanup } from "./signals";
 

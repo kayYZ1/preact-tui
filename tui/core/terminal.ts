@@ -1,4 +1,4 @@
-import type { Cell } from "../preact/src/types";
+import type { Cell } from "../preact/types/index";
 
 export class Terminal {
 	stdout: typeof process.stdout;
