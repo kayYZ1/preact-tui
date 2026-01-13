@@ -1,4 +1,4 @@
-import { effect, type Signal, signal } from "@preact/signals";
+import { effect, type Signal, signal } from "@preact/signals-core";
 
 const signalCache = new Map<string, Signal<unknown>>();
 const effectCleanups = new Map<string, () => void>();

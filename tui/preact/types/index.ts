@@ -64,6 +64,10 @@ export interface TextProps extends BaseProps {
 	underline?: boolean;
 	/** Whether text has strikethrough */
 	strikethrough?: boolean;
+	/** Maximum width for text wrapping */
+	width?: number;
+	/** Maximum height for text (number of lines) */
+	height?: number;
 }
 
 export interface TextInputProps extends BaseProps {
@@ -75,6 +79,8 @@ export interface TextInputProps extends BaseProps {
 	placeholder?: string;
 	/** Width of the input field */
 	width?: number;
+	/** Maximum height for text (number of lines) */
+	height?: number;
 	/** Whether the input is focused */
 	focused?: boolean;
 	/** Cursor position within the input */

@@ -1,14 +1,4 @@
-import type { BoxProps, TextInputProps, TextProps } from "./src/types";
-
-declare global {
-	namespace JSX {
-		interface IntrinsicElements {
-			box: BoxProps;
-			text: TextProps;
-			textInput: TextInputProps;
-		}
-	}
-}
+import type { BoxProps, TextInputProps, TextProps } from "./types/index";
 
 export function Box(props: BoxProps) {
 	return <box {...props} />;

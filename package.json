@@ -9,18 +9,14 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
-		"@preact/signals": "^2.5.1",
-		"preact": "^10.27.2",
+		"@preact/signals-core": "^1.11.1",
 		"yoga-layout": "^3.2.1"
 	},
 	"scripts": {
 		"biome:write": "bun x biome format --write",
 		"biome:check": "bun x biome check",
 		"test": "bun test",
-		"tui:playground:counter": "bun run tui/playground/counter.tsx",
-		"tui:playground:clock": "bun run tui/playground/clock.tsx",
-		"tui:playground:layout": "bun run tui/playground/layout.tsx",
-		"tui:playground:spinner": "bun run tui/playground/spinner.tsx",
-		"tui:playground:text-input": "bun run tui/playground/text-input.tsx"
+		"playground:text-input": "bun run tui/playground/text-input.tsx",
+		"playground:agent": "bun run tui/playground/agent.tsx"
 	}
 }

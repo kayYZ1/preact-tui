@@ -1,4 +1,4 @@
-import type { Cell } from "../preact/src/types";
+import type { Cell } from "../preact/types/index";
 
 export class Terminal {
 	stdout: typeof process.stdout;
@@ -7,6 +7,9 @@ export class Terminal {
 	currentBuffer: Cell[][];
 	previousBuffer: Cell[][];
 	isFirstRender: boolean = true;
+	cursorVisible: boolean = false;
+	cursorX: number = 0;
+	cursorY: number = 0;
 
 	constructor(stdout: typeof process.stdout = process.stdout) {
 		this.stdout = stdout;
@@ -25,15 +28,25 @@ export class Terminal {
 	}
 
 	hideCursor() {
-		this.stdout.write("\x1b[?25l");
+		if (this.cursorVisible) {
+			this.stdout.write("\x1b[?25l");
+			this.cursorVisible = false;
+		}
 	}
 
 	showCursor() {
-		this.stdout.write("\x1b[?25h");
+		if (!this.cursorVisible) {
+			this.stdout.write("\x1b[?25h");
+			this.cursorVisible = true;
+		}
 	}
 
 	setCursorPosition(x: number, y: number) {
-		this.stdout.write(`\x1b[${y + 1};${x + 1}H`);
+		if (this.cursorX !== x || this.cursorY !== y) {
+			this.stdout.write(`\x1b[${y + 1};${x + 1}H`);
+			this.cursorX = x;
+			this.cursorY = y;
+		}
 	}
 
 	private clearScreen() {

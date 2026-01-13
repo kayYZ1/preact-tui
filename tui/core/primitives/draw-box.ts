@@ -1,4 +1,4 @@
-import type { Position } from "@/tui/preact/src/types";
+import type { Position } from "@/tui/preact/types";
 
 export type BorderStyle = "single" | "double" | "round" | "bold" | "dash" | "block";
 
@@ -37,9 +37,12 @@ export const drawBox = (
 	const chars = BORDER_CHARS[style];
 	const positions: Position[] = [];
 
-	const wrap = (char: string, overrideColor?: string) => {
+	const wrap = (char?: string, overrideColor?: string) => {
+		if (!char) return "";
+
 		const c = overrideColor ?? color;
 		if (!c) return char;
+
 		const ansi = Bun.color(c, "ansi");
 		return ansi ? `${ansi}${char}\x1b[0m` : char;
 	};

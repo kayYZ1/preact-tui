@@ -1,68 +1,52 @@
 import { run } from "@/tui/preact";
 import { Box, Text, TextInput } from "@/tui/preact/components";
-import { useSignal, useVimInput, type VimMode } from "@/tui/preact/hooks";
+import { useSignal } from "@/tui/preact/hooks/signals";
+import { useTextInput, type VimMode } from "@/tui/preact/hooks/text-input";
 
 function TextInputDemo() {
 	const value = useSignal("");
-	const cursorPosition = useSignal(0);
+	const cursor = useSignal(0);
 	const mode = useSignal<VimMode>("NORMAL");
 
-	useVimInput({
+	useTextInput({
 		value,
-		cursorPosition,
+		cursorPosition: cursor,
 		mode,
 		focused: true,
 	});
 
-	const modeColors: Record<VimMode, string> = {
-		NORMAL: "blue",
-		INSERT: "green",
-	};
+	const charCount = value.value.length;
 
 	return (
-		<Box flex flexDirection="column" gap={1}>
-			<Box border="bold" borderColor="cyan" padding={1}>
+		<Box flex flexDirection="column" gap={1} padding={1}>
+			<Box border="round" borderColor="cyan" padding={1}>
 				<Text color="cyan" bold>
-					Vim Text Input
+					Text Input Demo
 				</Text>
 			</Box>
-			<Box
-				border="single"
-				borderColor={modeColors[mode.value]}
-				borderLabel={mode.value}
-				borderLabelColor={modeColors[mode.value]}
-				padding={1}
-				flexDirection="column"
-				gap={1}
-			>
-				<Text color="gray">Type something:</Text>
-				<TextInput
-					value={value.value}
-					placeholder="Press 'i' to insert..."
-					placeholderColor="gray"
-					color="white"
-					width={30}
-					focused={true}
-					cursorPosition={cursorPosition.value}
-				/>
+
+			<Box flexDirection="column" gap={1}>
+				<Box border="single" borderColor="gray" borderLabel={mode.value} borderLabelColor="white" padding={1}>
+					<TextInput
+						value={value.value}
+						cursorPosition={cursor.value}
+						placeholder="Type something..."
+						placeholderColor="gray"
+						height={5}
+						focused
+					/>
+				</Box>
+
+				<Box flexDirection="row" gap={2}>
+					<Text color="gray">Characters: </Text>
+					<Text color="yellow">{charCount}</Text>
+				</Box>
 			</Box>
-			<Box flexDirection="row" gap={1}>
-				<Text color="gray">Value:</Text>
-				<Text color="yellow">{value.value || "(empty)"}</Text>
-			</Box>
-			<Box flexDirection="row" gap={1}>
-				<Text color="gray">Cursor:</Text>
-				<Text color="cyan">{cursorPosition.value}</Text>
-			</Box>
-			<Box flexDirection="column">
-				<Text color="gray">Vim keybinds:</Text>
-				<Text color="gray"> i/a/I/A - insert mode</Text>
-				<Text color="gray"> h/l - move left/right</Text>
-				<Text color="gray"> w/b - word forward/back</Text>
-				<Text color="gray"> 0/$ - line start/end</Text>
-				<Text color="gray"> x - delete char</Text>
-				<Text color="gray"> Esc - normal mode</Text>
-				<Text color="gray"> Ctrl+C - exit</Text>
+
+			<Box>
+				<Text color="gray" italic>
+					Press Ctrl+C to exit
+				</Text>
 			</Box>
 		</Box>
 	);

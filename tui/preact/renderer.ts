@@ -1,11 +1,37 @@
-import { effect } from "@preact/signals";
-import type { VNode } from "preact";
+import { effect } from "@preact/signals-core";
 import Y from "yoga-layout";
+import { inputManager } from "../core/input";
+import { wrapText } from "../core/primitives/wrap-text";
 import { Terminal } from "../core/terminal";
 import { getElement } from "./elements";
 import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
 import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals";
-import type { Instance, Position, RenderContext } from "./src/types";
+import type { VNode } from "./jsx-runtime";
+import type { BoxProps, Instance, Position, RenderContext } from "./types/index";
+
+const FLEX_DIRECTION_MAP = {
+	row: Y.FLEX_DIRECTION_ROW,
+	column: Y.FLEX_DIRECTION_COLUMN,
+	"row-reverse": Y.FLEX_DIRECTION_ROW_REVERSE,
+	"column-reverse": Y.FLEX_DIRECTION_COLUMN_REVERSE,
+} as const;
+
+const JUSTIFY_CONTENT_MAP = {
+	"flex-start": Y.JUSTIFY_FLEX_START,
+	center: Y.JUSTIFY_CENTER,
+	"flex-end": Y.JUSTIFY_FLEX_END,
+	"space-between": Y.JUSTIFY_SPACE_BETWEEN,
+	"space-around": Y.JUSTIFY_SPACE_AROUND,
+	"space-evenly": Y.JUSTIFY_SPACE_EVENLY,
+} as const;
+
+const ALIGN_ITEMS_MAP = {
+	"flex-start": Y.ALIGN_FLEX_START,
+	center: Y.ALIGN_CENTER,
+	"flex-end": Y.ALIGN_FLEX_END,
+	stretch: Y.ALIGN_STRETCH,
+	baseline: Y.ALIGN_BASELINE,
+} as const;
 
 export class Renderer {
 	terminal: Terminal;
@@ -34,6 +60,21 @@ export class Renderer {
 		instance.yogaNode.free();
 	}
 
+	applyBoxLayout(node: ReturnType<typeof Y.Node.create>, props: BoxProps) {
+		if (props.flex) node.setFlex(Number(props.flex));
+		if (props.flexDirection) node.setFlexDirection(FLEX_DIRECTION_MAP[props.flexDirection]);
+		if (props.justifyContent) node.setJustifyContent(JUSTIFY_CONTENT_MAP[props.justifyContent]);
+		if (props.alignItems) node.setAlignItems(ALIGN_ITEMS_MAP[props.alignItems]);
+		if (props.gap) {
+			const isRow = props.flexDirection === "row" || props.flexDirection === "row-reverse";
+			node.setGap(isRow ? Y.GUTTER_COLUMN : Y.GUTTER_ROW, props.gap);
+		}
+		if (props.padding) node.setPadding(Y.EDGE_ALL, props.padding);
+		if (props.width) node.setWidth(props.width);
+		if (props.height) node.setHeight(props.height);
+		if (props.border) node.setBorder(Y.EDGE_ALL, 1);
+	}
+
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
 			nextComponent();
@@ -51,92 +92,33 @@ export class Renderer {
 
 		if (instance.type === "text") {
 			const text = instance.props.children || "";
-			instance.yogaNode.setWidth(text.length);
-			instance.yogaNode.setHeight(1);
+			const width = instance.props.width;
+			const height = instance.props.height;
+
+			if (width) {
+				// If width is specified, calculate wrapped height
+				const lines = wrapText(text, width);
+				instance.yogaNode.setWidth(width);
+				instance.yogaNode.setHeight(Math.min(lines.length, height || Infinity));
+			} else {
+				// Height will be calculated based on actual wrapping during render
+				if (height) {
+					instance.yogaNode.setHeight(height);
+				}
+			}
 		}
 
 		if (instance.type === "textInput") {
-			const width = instance.props.width || 20;
-			instance.yogaNode.setWidth(width);
-			instance.yogaNode.setHeight(1);
+			if (instance.props.width) {
+				instance.yogaNode.setWidth(instance.props.width);
+			} else {
+				instance.yogaNode.setFlexGrow(1);
+			}
+			instance.yogaNode.setHeight(instance.props.height || 1);
 		}
 
 		if (instance.type === "box") {
-			if (instance.props.flex) {
-				instance.yogaNode.setFlex(Number(instance.props.flex));
-			}
-
-			if (instance.props.flexDirection === "row") {
-				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW);
-			} else if (instance.props.flexDirection === "column") {
-				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN);
-			} else if (instance.props.flexDirection === "row-reverse") {
-				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_ROW_REVERSE);
-			} else if (instance.props.flexDirection === "column-reverse") {
-				instance.yogaNode.setFlexDirection(Y.FLEX_DIRECTION_COLUMN_REVERSE);
-			}
-
-			if (instance.props.justifyContent) {
-				switch (instance.props.justifyContent) {
-					case "flex-start":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_FLEX_START);
-						break;
-					case "center":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_CENTER);
-						break;
-					case "flex-end":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_FLEX_END);
-						break;
-					case "space-between":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_BETWEEN);
-						break;
-					case "space-around":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_AROUND);
-						break;
-					case "space-evenly":
-						instance.yogaNode.setJustifyContent(Y.JUSTIFY_SPACE_EVENLY);
-						break;
-				}
-			}
-
-			if (instance.props.alignItems) {
-				switch (instance.props.alignItems) {
-					case "flex-start":
-						instance.yogaNode.setAlignItems(Y.ALIGN_FLEX_START);
-						break;
-					case "center":
-						instance.yogaNode.setAlignItems(Y.ALIGN_CENTER);
-						break;
-					case "flex-end":
-						instance.yogaNode.setAlignItems(Y.ALIGN_FLEX_END);
-						break;
-					case "stretch":
-						instance.yogaNode.setAlignItems(Y.ALIGN_STRETCH);
-						break;
-					case "baseline":
-						instance.yogaNode.setAlignItems(Y.ALIGN_BASELINE);
-						break;
-				}
-			}
-
-			if (instance.props.gap) {
-				const isRowDirection =
-					instance.props.flexDirection === "row" || instance.props.flexDirection === "row-reverse";
-				const gutter = isRowDirection ? Y.GUTTER_COLUMN : Y.GUTTER_ROW;
-				instance.yogaNode.setGap(gutter, instance.props.gap);
-			}
-
-			if (instance.props.padding) {
-				instance.yogaNode.setPadding(Y.EDGE_ALL, instance.props.padding);
-			}
-
-			if (instance.props.width) instance.yogaNode.setWidth(instance.props.width);
-			if (instance.props.height) instance.yogaNode.setHeight(instance.props.height);
-
-			if (instance.props.border) {
-				instance.yogaNode.setBorder(Y.EDGE_ALL, 1);
-			}
-			//Box
+			this.applyBoxLayout(instance.yogaNode, instance.props);
 		}
 
 		const children = Array.isArray(vnode.props.children)
@@ -221,7 +203,6 @@ export function run(createVNode: () => VNode) {
 	const terminal = new Terminal();
 	const { unmount } = render(createVNode, terminal);
 
-	const { inputManager } = require("../core/input");
 	inputManager.start();
 
 	const cleanup = inputManager.onKey((event: { key: string; ctrl: boolean }) => {

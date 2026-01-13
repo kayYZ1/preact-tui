@@ -1,4 +1,5 @@
-import type { ElementHandler, Instance, Position } from "../src/types";
+import { splitText } from "@/tui/core/primitives/wrap-text";
+import type { ElementHandler, Instance, Position } from "../types/index";
 
 type TextInputInstance = Extract<Instance, { type: "textInput" }>;
 
@@ -21,7 +22,9 @@ export function clearPendingCursor() {
 export const textInputElement: ElementHandler<TextInputInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
-	const width = instance.yogaNode.getComputedWidth();
+	const widthNum = instance.yogaNode.getComputedWidth();
+	const height = instance.yogaNode.getComputedHeight();
+	const width = Math.ceil(widthNum);
 
 	const value = instance.props.value || "";
 	const placeholder = instance.props.placeholder || "";
@@ -29,29 +32,50 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
 	const isPlaceholder = !value && placeholder;
 	const cursorPos = instance.props.cursorPosition ?? value.length;
 
-	let formattedText = displayText.slice(0, width).padEnd(width, " ");
+	// Calculate cursor line and column based on width
+	const cursorLine = Math.floor(cursorPos / width);
+	const cursorCol = cursorPos % width;
 
-	const colorToUse = isPlaceholder ? instance.props.placeholderColor : instance.props.color;
-	if (colorToUse) {
-		const ansi = Bun.color(colorToUse, "ansi");
-		if (ansi) {
-			formattedText = `${ansi}${formattedText}\x1b[0m`;
-		}
+	// Split text into lines based on width (character-based for inputs)
+	const textToSplit = displayText || "";
+	const lines = splitText(textToSplit, width);
+
+	// Trim or pad lines to fit height
+	const displayLines = lines.slice(0, height);
+	while (displayLines.length < height) {
+		displayLines.push("");
 	}
 
-	if (instance.props.focused) {
+	const positions: Position[] = [];
+
+	for (let lineIdx = 0; lineIdx < displayLines.length; lineIdx++) {
+		const line = displayLines[lineIdx] ?? "";
+
+		let formattedText = line.slice(0, width).padEnd(width, " ");
+
+		const colorToUse = isPlaceholder ? instance.props.placeholderColor : instance.props.color;
+		if (colorToUse) {
+			const ansi = Bun.color(colorToUse, "ansi");
+			if (ansi) {
+				formattedText = `${ansi}${formattedText}\x1b[0m`;
+			}
+		}
+
+		positions.push({
+			x: Math.round(x),
+			y: Math.round(y) + lineIdx,
+			text: formattedText,
+		});
+	}
+
+	// Set cursor position if focused and within visible area
+	if (instance.props.focused && cursorLine < height) {
 		pendingCursor = {
-			x: Math.round(x) + Math.min(cursorPos, width - 1),
-			y: Math.round(y),
+			x: Math.round(x) + cursorCol,
+			y: Math.round(y) + cursorLine,
 			visible: true,
 		};
 	}
 
-	return [
-		{
-			x: Math.round(x),
-			y: Math.round(y),
-			text: formattedText,
-		},
-	];
+	return positions;
 };
