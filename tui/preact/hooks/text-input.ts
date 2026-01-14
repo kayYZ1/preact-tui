@@ -58,7 +58,9 @@ function handleNormalMode(event: KeyEvent, state: TextState, options: UseTextInp
 	const enterInsert = (cursorDelta = 0) => {
 		mode.value = "INSERT";
 		options.onModeChange?.("INSERT");
-		if (cursorDelta) moveCursor(state, cursorDelta);
+		if (cursorDelta) {
+			moveCursor(state, cursorDelta);
+		}
 	};
 
 	switch (event.key) {

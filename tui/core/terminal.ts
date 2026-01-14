@@ -137,6 +137,8 @@ export class Terminal {
 
 		if (output) {
 			this.stdout.write(output);
+			this.cursorX = -1;
+			this.cursorY = -1;
 		}
 
 		this.previousBuffer = this.currentBuffer.map((row) => row.map((cell) => ({ ...cell })));

@@ -41,7 +41,7 @@ function Agent() {
 
 	return (
 		<Box flex flexDirection="column" padding={1} gap={1}>
-			<Box border="round" borderColor="cyan" padding={1} borderLabel=" Agent " borderLabelColor="cyan">
+			<Box border="round" borderColor="cyan" padding={1} borderLabel="TinyAg" borderLabelColor="cyan">
 				<Text color="white" bold>
 					Coding Agent
 				</Text>
@@ -60,19 +60,13 @@ function Agent() {
 				))}
 			</Box>
 
-			<Box
-				border="single"
-				borderColor={mode.value === "INSERT" ? "green" : "yellow"}
-				borderLabel={` ${mode.value} `}
-				borderLabelColor={mode.value === "INSERT" ? "green" : "yellow"}
-				padding={1}
-			>
+			<Box border="single" borderLabel={mode.value} padding={1}>
 				<TextInput
 					value={input.value}
 					cursorPosition={cursor.value}
 					placeholder="Type a message..."
 					placeholderColor="gray"
-					height={1}
+					height={5}
 					focused
 				/>
 			</Box>

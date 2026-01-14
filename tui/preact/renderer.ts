@@ -165,6 +165,7 @@ export class Renderer {
 			this.terminal.setCursorPosition(cursor.x, cursor.y);
 		} else {
 			this.terminal.hideCursor();
+			this.terminal.setCursorPosition(0, 0);
 		}
 	}
 
