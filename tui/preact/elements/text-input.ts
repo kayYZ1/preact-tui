@@ -1,7 +1,23 @@
 import { splitText, wrapText } from "@/tui/core/primitives/wrap-text";
-import type { ElementHandler, Instance, Position } from "../types/index";
+import type { ElementHandler, Position, TextInputInstance } from "../types/index";
+import type { LayoutHandler } from "./index";
 
-type TextInputInstance = Extract<Instance, { type: "textInput" }>;
+export const textInputLayout: LayoutHandler<TextInputInstance> = (instance) => {
+	if (instance.props.width) {
+		instance.yogaNode.setWidth(instance.props.width);
+	}
+
+	const height = instance.props.height;
+	if (height !== undefined) {
+		instance.yogaNode.setHeight(height);
+	} else {
+		instance.yogaNode.setMeasureFunc((width) => {
+			const value = instance.props.value || instance.props.placeholder || "";
+			const lines = wrapText(value, Math.floor(width));
+			return { width, height: Math.max(1, lines.length) };
+		});
+	}
+};
 
 interface CursorInfo {
 	x: number;

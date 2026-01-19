@@ -105,3 +105,13 @@ Text styling via `<Text>` props:
 - Use `Bun.color(colorName, "ansi")` for color conversion
 - All coordinates are integer character positions
 - Text editing logic is centralized in `hooks/text-utils.ts`
+
+## Naming Conventions
+
+- **Element type strings**: camelCase (e.g., `"textInput"`, `"selectInput"`)
+- **File names**: kebab-case (e.g., `text-input.ts`, `draw-box.ts`)
+- **Functions/variables**: camelCase (e.g., `textInputLayout`, `getElement`)
+- **Types/Interfaces**: PascalCase (e.g., `TextInputProps`, `ElementHandler`)
+- **Constants**: UPPER_SNAKE_CASE for enum-like objects (e.g., `ElementType.TEXT_INPUT`)
+- **JSX intrinsic elements**: camelCase (e.g., `<textInput />`) - internal use only
+- **Component wrappers**: PascalCase (e.g., `<TextInput />`, `<Box />`) - what users import

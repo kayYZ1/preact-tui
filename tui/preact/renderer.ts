@@ -1,37 +1,12 @@
 import { effect } from "@preact/signals-core";
 import Y from "yoga-layout";
 import { inputManager } from "../core/input";
-import { wrapText } from "../core/primitives/wrap-text";
 import { Terminal } from "../core/terminal";
-import { getElement } from "./elements";
+import { ElementType, getElement } from "./elements";
 import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
 import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals";
 import type { VNode } from "./jsx-runtime";
 import type { Instance, Position, RenderContext } from "./types/index";
-
-const FLEX_DIRECTION_MAP = {
-	row: Y.FLEX_DIRECTION_ROW,
-	column: Y.FLEX_DIRECTION_COLUMN,
-	"row-reverse": Y.FLEX_DIRECTION_ROW_REVERSE,
-	"column-reverse": Y.FLEX_DIRECTION_COLUMN_REVERSE,
-} as const;
-
-const JUSTIFY_CONTENT_MAP = {
-	"flex-start": Y.JUSTIFY_FLEX_START,
-	center: Y.JUSTIFY_CENTER,
-	"flex-end": Y.JUSTIFY_FLEX_END,
-	"space-between": Y.JUSTIFY_SPACE_BETWEEN,
-	"space-around": Y.JUSTIFY_SPACE_AROUND,
-	"space-evenly": Y.JUSTIFY_SPACE_EVENLY,
-} as const;
-
-const ALIGN_ITEMS_MAP = {
-	"flex-start": Y.ALIGN_FLEX_START,
-	center: Y.ALIGN_CENTER,
-	"flex-end": Y.ALIGN_FLEX_END,
-	stretch: Y.ALIGN_STRETCH,
-	baseline: Y.ALIGN_BASELINE,
-} as const;
 
 export class Renderer {
 	terminal: Terminal;
@@ -49,8 +24,8 @@ export class Renderer {
 			renderInstance: this.renderInstance.bind(this),
 		};
 
-		const element = getElement(instance.type);
-		return element(instance, context);
+		const { render } = getElement(instance.type);
+		return render(instance, context);
 	}
 
 	freeYogaNodes(instance: Instance) {
@@ -60,53 +35,6 @@ export class Renderer {
 		instance.yogaNode.free();
 	}
 
-	applyBoxLayout(instance: Extract<Instance, { type: "box" }>) {
-		const { yogaNode, props } = instance;
-		if (props.flex) yogaNode.setFlex(Number(props.flex));
-		if (props.flexDirection) yogaNode.setFlexDirection(FLEX_DIRECTION_MAP[props.flexDirection]);
-		if (props.justifyContent) yogaNode.setJustifyContent(JUSTIFY_CONTENT_MAP[props.justifyContent]);
-		if (props.alignItems) yogaNode.setAlignItems(ALIGN_ITEMS_MAP[props.alignItems]);
-		if (props.gap) {
-			const isRow = props.flexDirection === "row" || props.flexDirection === "row-reverse";
-			yogaNode.setGap(isRow ? Y.GUTTER_COLUMN : Y.GUTTER_ROW, props.gap);
-		}
-		if (props.padding) yogaNode.setPadding(Y.EDGE_ALL, props.padding);
-		if (props.height) yogaNode.setHeight(props.height);
-		if (props.width) yogaNode.setWidth(props.width);
-		if (props.border) yogaNode.setBorder(Y.EDGE_ALL, 1);
-	}
-
-	applyTextLayout(instance: Extract<Instance, { type: "text" }>) {
-		const text = instance.props.children || "";
-		const width = instance.props.width;
-		const height = instance.props.height;
-
-		if (width) {
-			const lines = wrapText(text, width);
-			instance.yogaNode.setWidth(width);
-			instance.yogaNode.setHeight(Math.min(lines.length, height || Infinity));
-		} else if (height) {
-			instance.yogaNode.setHeight(height);
-		}
-	}
-
-	applyTextInputLayout(instance: Extract<Instance, { type: "textInput" }>) {
-		if (instance.props.width) {
-			instance.yogaNode.setWidth(instance.props.width);
-		}
-
-		const height = instance.props.height;
-		if (height !== undefined) {
-			instance.yogaNode.setHeight(height);
-		} else {
-			instance.yogaNode.setMeasureFunc((width) => {
-				const value = instance.props.value || instance.props.placeholder || "";
-				const lines = wrapText(value, Math.floor(width));
-				return { width, height: Math.max(1, lines.length) };
-			});
-		}
-	}
-
 	createInstanceTree(vnode: VNode): Instance {
 		if (typeof vnode.type === "function") {
 			nextComponent();
@@ -114,7 +42,9 @@ export class Renderer {
 			return this.createInstanceTree(childVNode);
 		}
 
-		const type = typeof vnode.type === "string" ? vnode.type : "box";
+		const type = typeof vnode.type === "string" ? vnode.type : ElementType.BOX;
+		const element = getElement(type);
+
 		const instance = {
 			type,
 			props: vnode.props,
@@ -122,38 +52,30 @@ export class Renderer {
 			yogaNode: Y.Node.create(),
 		} as Instance;
 
-		switch (instance.type) {
-			case "text":
-				this.applyTextLayout(instance);
-				break;
-			case "textInput":
-				this.applyTextInputLayout(instance);
-				break;
-			case "box":
-				this.applyBoxLayout(instance);
-				break;
-		}
+		element.layout(instance);
 
-		const children = Array.isArray(vnode.props.children)
-			? vnode.props.children
-			: [vnode.props.children].filter(Boolean);
-		for (const child of children) {
-			if (typeof child === "string" || typeof child === "number") {
-				const childInstance: Instance = {
-					type: "text",
-					props: { children: child.toString() },
-					children: [],
-					yogaNode: Y.Node.create(),
-				};
-				const text = childInstance.props.children;
-				childInstance.yogaNode.setWidth(text.length);
-				childInstance.yogaNode.setHeight(1);
-				instance.children.push(childInstance);
-				instance.yogaNode.insertChild(childInstance.yogaNode, instance.children.length - 1);
-			} else if (child && typeof child === "object" && child.type) {
-				const childInstance = this.createInstanceTree(child);
-				instance.children.push(childInstance);
-				instance.yogaNode.insertChild(childInstance.yogaNode, instance.children.length - 1);
+		if (element.hasChildren) {
+			const children = Array.isArray(vnode.props.children)
+				? vnode.props.children
+				: [vnode.props.children].filter(Boolean);
+
+			for (const child of children) {
+				if (typeof child === "string" || typeof child === "number") {
+					const textElement = getElement(ElementType.TEXT);
+					const childInstance: Instance = {
+						type: ElementType.TEXT,
+						props: { children: child.toString() },
+						children: [],
+						yogaNode: Y.Node.create(),
+					};
+					textElement.layout(childInstance);
+					instance.children.push(childInstance);
+					instance.yogaNode.insertChild(childInstance.yogaNode, instance.children.length - 1);
+				} else if (child && typeof child === "object" && child.type) {
+					const childInstance = this.createInstanceTree(child);
+					instance.children.push(childInstance);
+					instance.yogaNode.insertChild(childInstance.yogaNode, instance.children.length - 1);
+				}
 			}
 		}
 

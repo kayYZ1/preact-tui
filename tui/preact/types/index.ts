@@ -68,6 +68,8 @@ export interface TextProps extends BaseProps {
 	width?: number;
 	/** Maximum height for text (number of lines) */
 	height?: number;
+	/** Flex grow factor */
+	flex?: number | boolean;
 }
 
 export interface TextInputProps extends BaseProps {
@@ -91,34 +93,35 @@ export interface TextInputProps extends BaseProps {
 	placeholderColor?: string;
 }
 
-export type Instance =
-	| {
-			/** Type of the instance */
-			type: "box";
-			/** Properties for the box */
-			props: BoxProps;
-			/** Child instances */
-			children: Instance[];
-			/** Yoga layout node */
-			yogaNode: ReturnType<typeof Y.Node.create>;
-	  }
-	| {
-			/** Type of the instance */
-			type: "text";
-			/** Properties for the text */
-			props: TextProps;
-			/** Child instances */
-			children: Instance[];
-			/** Yoga layout node */
-			yogaNode: ReturnType<typeof Y.Node.create>;
-	  }
-	| {
-			/** Type of the instance */
-			type: "textInput";
-			/** Properties for the text input */
-			props: TextInputProps;
-			/** Child instances */
-			children: Instance[];
-			/** Yoga layout node */
-			yogaNode: ReturnType<typeof Y.Node.create>;
-	  };
+/** Base instance structure - all elements extend this */
+export interface BaseInstance<T extends string = string, P extends BaseProps = BaseProps> {
+	type: T;
+	props: P;
+	children: Instance[];
+	yogaNode: ReturnType<typeof Y.Node.create>;
+}
+
+/** Known element instances for type inference */
+export type BoxInstance = BaseInstance<"box", BoxProps>;
+export type TextInstance = BaseInstance<"text", TextProps>;
+export type TextInputInstance = BaseInstance<"textInput", TextInputProps>;
+
+/** Union of known instances - extensible via module augmentation */
+export type Instance = BoxInstance | TextInstance | TextInputInstance;
+
+/** Type helper to extract instance by type name */
+export type InstanceOfType<T extends Instance["type"]> = Extract<Instance, { type: T }>;
+
+/** Props map for JSX type inference */
+export interface ElementPropsMap {
+	box: BoxProps;
+	text: TextProps;
+	textInput: TextInputProps;
+}
+
+/** Element type constants */
+export const ElementType = {
+	BOX: "box",
+	TEXT: "text",
+	TEXT_INPUT: "textInput",
+} as const;

@@ -47,7 +47,9 @@ function Agent() {
 						<Text color={msg.role === "user" ? "green" : "blue"} bold>
 							{msg.role === "user" ? ">" : "•"}
 						</Text>
-						<Text color={msg.role === "user" ? "white" : "gray"}>{msg.content}</Text>
+						<Text flex color={msg.role === "user" ? "white" : "gray"}>
+							{msg.content}
+						</Text>
 					</Box>
 				))}
 			</Box>
