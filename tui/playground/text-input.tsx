@@ -32,7 +32,6 @@ function TextInputDemo() {
 						cursorPosition={cursor.value}
 						placeholder="Type something..."
 						placeholderColor="gray"
-						height={5}
 						focused
 					/>
 				</Box>

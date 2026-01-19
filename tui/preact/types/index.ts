@@ -79,7 +79,7 @@ export interface TextInputProps extends BaseProps {
 	placeholder?: string;
 	/** Width of the input field */
 	width?: number;
-	/** Maximum height for text (number of lines) */
+	/** Fixed height in lines. If not set, height auto-scales based on content. */
 	height?: number;
 	/** Whether the input is focused */
 	focused?: boolean;

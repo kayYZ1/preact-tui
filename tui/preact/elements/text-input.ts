@@ -1,4 +1,4 @@
-import { splitText } from "@/tui/core/primitives/wrap-text";
+import { splitText, wrapText } from "@/tui/core/primitives/wrap-text";
 import type { ElementHandler, Instance, Position } from "../types/index";
 
 type TextInputInstance = Extract<Instance, { type: "textInput" }>;
@@ -31,14 +31,35 @@ export const textInputElement: ElementHandler<TextInputInstance> = (instance, co
 	const displayText = value || placeholder;
 	const isPlaceholder = !value && placeholder;
 	const cursorPos = instance.props.cursorPosition ?? value.length;
+	const useWordWrap = instance.props.height === undefined;
 
-	// Calculate cursor line and column based on width
-	const cursorLine = Math.floor(cursorPos / width);
-	const cursorCol = cursorPos % width;
-
-	// Split text into lines based on width (character-based for inputs)
+	// Split text into lines based on width
 	const textToSplit = displayText || "";
-	const lines = splitText(textToSplit, width);
+	const lines = useWordWrap ? wrapText(textToSplit, width) : splitText(textToSplit, width);
+
+	// Calculate cursor line and column
+	let cursorLine = 0;
+	let cursorCol = 0;
+	if (useWordWrap) {
+		// For word-wrapped text, find cursor position by walking through lines
+		let charCount = 0;
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i] ?? "";
+			const lineLen = line.length;
+			const lineEnd = charCount + lineLen + (i < lines.length - 1 ? 1 : 0); // +1 for space between words
+			if (cursorPos <= charCount + lineLen) {
+				cursorLine = i;
+				cursorCol = cursorPos - charCount;
+				break;
+			}
+			charCount = lineEnd;
+			cursorLine = i;
+			cursorCol = lineLen;
+		}
+	} else {
+		cursorLine = Math.floor(cursorPos / width);
+		cursorCol = cursorPos % width;
+	}
 
 	// Trim or pad lines to fit height
 	const displayLines = lines.slice(0, height);
