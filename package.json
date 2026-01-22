@@ -16,7 +16,6 @@
 		"biome:write": "bun x biome format --write",
 		"biome:check": "bun x biome check",
 		"test": "bun test",
-		"playground:text-input": "bun run tui/playground/text-input.tsx",
 		"playground:agent": "bun run tui/playground/agent.tsx"
 	}
 }

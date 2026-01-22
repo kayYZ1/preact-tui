@@ -27,7 +27,7 @@ const ALIGN_ITEMS_MAP = {
 	baseline: Y.ALIGN_BASELINE,
 } as const;
 
-export const boxLayout: LayoutHandler<BoxInstance> = (instance) => {
+export const BoxLayout: LayoutHandler<BoxInstance> = (instance) => {
 	const { yogaNode, props } = instance;
 	if (props.flex) yogaNode.setFlex(Number(props.flex));
 	if (props.flexDirection) yogaNode.setFlexDirection(FLEX_DIRECTION_MAP[props.flexDirection]);
@@ -43,7 +43,7 @@ export const boxLayout: LayoutHandler<BoxInstance> = (instance) => {
 	if (props.border) yogaNode.setBorder(Y.EDGE_ALL, 1);
 };
 
-export const boxElement: ElementHandler<BoxInstance> = (instance, context): Position[] => {
+export const BoxElement: ElementHandler<BoxInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 	const positions: Position[] = [];

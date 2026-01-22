@@ -1,5 +1,5 @@
 import { run } from "@/tui/preact";
-import { Box, Text, TextInput } from "@/tui/preact/components";
+import { Box, Spinner, Text, TextInput } from "@/tui/preact/components";
 import { useSignal } from "@/tui/preact/hooks/signals";
 import { useTextInput, type VimMode } from "@/tui/preact/hooks/text-input";
 
@@ -12,21 +12,23 @@ function Agent() {
 	const input = useSignal("");
 	const cursor = useSignal(0);
 	const mode = useSignal<VimMode>("INSERT");
+	const isLoading = useSignal(false);
 	const messages = useSignal<Message[]>([
 		{ role: "agent", content: "Hello! I'm your coding assistant. How can I help you today?" },
 	]);
 
 	const handleSubmit = (value: string) => {
-		if (!value.trim()) return;
+		if (!value.trim() || isLoading.value) return;
 
-		messages.value = [
-			...messages.value,
-			{ role: "user", content: value },
-			{ role: "agent", content: `You said: "${value}"` },
-		];
-
+		messages.value = [...messages.value, { role: "user", content: value }];
 		input.value = "";
 		cursor.value = 0;
+		isLoading.value = true;
+
+		setTimeout(() => {
+			messages.value = [...messages.value, { role: "agent", content: `You said: "${value}"` }];
+			isLoading.value = false;
+		}, 1500);
 	};
 
 	useTextInput({
@@ -52,6 +54,14 @@ function Agent() {
 						</Text>
 					</Box>
 				))}
+				{isLoading.value && (
+					<Box flexDirection="row" gap={1} alignItems="center">
+						<Spinner color="cyan" />
+						<Text color="gray" italic>
+							Thinking...
+						</Text>
+					</Box>
+				)}
 			</Box>
 
 			<Box border="single" borderLabel={mode.value} padding={1}>

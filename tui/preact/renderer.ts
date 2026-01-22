@@ -87,12 +87,13 @@ export class Renderer {
 			this.freeYogaNodes(this.rootInstance);
 		}
 		clearPendingCursor();
+
 		this.rootInstance = this.createInstanceTree(vnode);
 		this.rootInstance.yogaNode.setWidth(this.terminal.width);
 		this.rootInstance.yogaNode.setHeight(this.terminal.height);
 		this.rootInstance.yogaNode.calculateLayout(this.terminal.width, this.terminal.height, Y.DIRECTION_LTR);
-		const positions = this.renderInstance(this.rootInstance, 0, 0);
-		this.terminal.render(positions);
+
+		this.terminal.render(this.renderInstance(this.rootInstance, 0, 0));
 
 		const cursor = getPendingCursor();
 		if (cursor?.visible) {
@@ -106,8 +107,7 @@ export class Renderer {
 	render(createVNode: () => VNode) {
 		this.disposeEffect = effect(() => {
 			resetHooks();
-			const vnode = createVNode();
-			this.commitRender(vnode);
+			this.commitRender(createVNode());
 		});
 	}
 

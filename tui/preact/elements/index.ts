@@ -1,12 +1,14 @@
 import { type BaseInstance, type ElementHandler, ElementType } from "../types/index";
-import { boxElement, boxLayout } from "./box";
-import { textElement, textLayout } from "./text";
-import { textInputElement, textInputLayout } from "./text-input";
-
-export { ElementType };
+import { BoxElement, BoxLayout } from "./box";
+import { SpinnerElement, SpinnerLayout } from "./spinner";
+import { TextElement, TextLayout } from "./text";
+import { TextInputElement, TextInputLayout } from "./text-input";
 
 /** Layout function applies Yoga properties to an instance */
 export type LayoutHandler<T extends BaseInstance = BaseInstance> = (instance: T) => void;
+
+/** Export ElementType here for clarity */
+export { ElementType };
 
 interface ElementDefinition {
 	render: ElementHandler<any>;
@@ -49,21 +51,27 @@ export function hasElement(type: string): boolean {
 
 // Register built-in elements
 registerElement(ElementType.BOX, {
-	render: boxElement,
-	layout: boxLayout,
+	render: BoxElement,
+	layout: BoxLayout,
 	hasChildren: true,
 });
 
 registerElement(ElementType.TEXT, {
-	render: textElement,
-	layout: textLayout,
+	render: TextElement,
+	layout: TextLayout,
 	hasChildren: false,
 });
 
 registerElement(ElementType.TEXT_INPUT, {
-	render: textInputElement,
-	layout: textInputLayout,
+	render: TextInputElement,
+	layout: TextInputLayout,
 	hasChildren: false,
 });
 
-export { boxElement, textElement, textInputElement };
+registerElement(ElementType.SPINNER, {
+	render: SpinnerElement,
+	layout: SpinnerLayout,
+	hasChildren: false,
+});
+
+export { BoxElement, SpinnerElement, TextElement, TextInputElement };

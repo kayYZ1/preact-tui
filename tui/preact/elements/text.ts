@@ -3,7 +3,7 @@ import { wrapText } from "@/tui/core/primitives/wrap-text";
 import type { ElementHandler, Position, TextInstance } from "../types/index";
 import type { LayoutHandler } from "./index";
 
-export const textLayout: LayoutHandler<TextInstance> = (instance) => {
+export const TextLayout: LayoutHandler<TextInstance> = (instance) => {
 	const { width, height, flex } = instance.props;
 
 	if (flex) instance.yogaNode.setFlex(Number(flex));
@@ -25,7 +25,7 @@ export const textLayout: LayoutHandler<TextInstance> = (instance) => {
 	}
 };
 
-export const textElement: ElementHandler<TextInstance> = (instance, context): Position[] => {
+export const TextElement: ElementHandler<TextInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 	const width = instance.yogaNode.getComputedWidth();

@@ -2,7 +2,7 @@ import { splitText, wrapText } from "@/tui/core/primitives/wrap-text";
 import type { ElementHandler, Position, TextInputInstance } from "../types/index";
 import type { LayoutHandler } from "./index";
 
-export const textInputLayout: LayoutHandler<TextInputInstance> = (instance) => {
+export const TextInputLayout: LayoutHandler<TextInputInstance> = (instance) => {
 	if (instance.props.width) {
 		instance.yogaNode.setWidth(instance.props.width);
 	}
@@ -35,7 +35,7 @@ export function clearPendingCursor() {
 	pendingCursor = null;
 }
 
-export const textInputElement: ElementHandler<TextInputInstance> = (instance, context): Position[] => {
+export const TextInputElement: ElementHandler<TextInputInstance> = (instance, context): Position[] => {
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 	const widthNum = instance.yogaNode.getComputedWidth();

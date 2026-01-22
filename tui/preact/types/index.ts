@@ -93,6 +93,13 @@ export interface TextInputProps extends BaseProps {
 	placeholderColor?: string;
 }
 
+export interface SpinnerProps extends BaseProps {
+	/** Color of the spinner */
+	color?: string;
+	/** Frame interval in milliseconds (default: 80) */
+	interval?: number;
+}
+
 /** Base instance structure - all elements extend this */
 export interface BaseInstance<T extends string = string, P extends BaseProps = BaseProps> {
 	type: T;
@@ -105,9 +112,10 @@ export interface BaseInstance<T extends string = string, P extends BaseProps = B
 export type BoxInstance = BaseInstance<"box", BoxProps>;
 export type TextInstance = BaseInstance<"text", TextProps>;
 export type TextInputInstance = BaseInstance<"textInput", TextInputProps>;
+export type SpinnerInstance = BaseInstance<"spinner", SpinnerProps>;
 
 /** Union of known instances - extensible via module augmentation */
-export type Instance = BoxInstance | TextInstance | TextInputInstance;
+export type Instance = BoxInstance | TextInstance | TextInputInstance | SpinnerInstance;
 
 /** Type helper to extract instance by type name */
 export type InstanceOfType<T extends Instance["type"]> = Extract<Instance, { type: T }>;
@@ -117,6 +125,7 @@ export interface ElementPropsMap {
 	box: BoxProps;
 	text: TextProps;
 	textInput: TextInputProps;
+	spinner: SpinnerProps;
 }
 
 /** Element type constants */
@@ -124,4 +133,5 @@ export const ElementType = {
 	BOX: "box",
 	TEXT: "text",
 	TEXT_INPUT: "textInput",
+	SPINNER: "spinner",
 } as const;
