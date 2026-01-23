@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-core";
-import { inputManager, type KeyEvent } from "../../core/input";
-import { getHookKey, hasCleanup, setCleanup } from "./signals";
-import { deleteBackward, deleteForward, insertChar, moveCursor, setCursor, type TextState } from "./text-utils";
+import { inputManager, type KeyEvent } from "../../core/input.ts";
+import { getHookKey, hasCleanup, setCleanup } from "./signals.ts";
+import { deleteBackward, deleteForward, insertChar, moveCursor, setCursor, type TextState } from "./text-utils.ts";
 
 export type VimMode = "NORMAL" | "INSERT";
 

@@ -1,1 +1,1 @@
-export { render, run } from "./renderer";
+export { render, run } from "./renderer.ts";

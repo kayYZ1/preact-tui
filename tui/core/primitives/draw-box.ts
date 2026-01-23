@@ -1,4 +1,5 @@
-import type { Position } from "@/tui/preact/types";
+import type { Position } from "@/tui/preact/types/index.ts";
+import { toAnsi } from "./color.ts";
 
 export type BorderStyle = "single" | "double" | "round" | "bold" | "dash" | "block";
 
@@ -43,7 +44,7 @@ export const drawBox = (
 		const c = overrideColor ?? color;
 		if (!c) return char;
 
-		const ansi = Bun.color(c, "ansi");
+		const ansi = toAnsi(c);
 		return ansi ? `${ansi}${char}\x1b[0m` : char;
 	};
 

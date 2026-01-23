@@ -7,29 +7,29 @@ Repo for [..Insert name] coding agent with custom tui
 ```
 ├── tui/          # Preact-based TUI framework (see tui/AGENTS.md)
 ├── agent/        # AI Agent implementation (see agent/AGENTS.md)
-├── package.json  # Root package.json with shared dependencies
-└── tsconfig.json # Shared TypeScript configuration
+├── deno.json     # Deno configuration with tasks and import maps
 ```
 
 ## Build/Run Commands
 
-- **Install dependencies**: `bun install`
-- **Format code**: `bun run biome:write`
+- **Format code**: `deno task fmt`
+- **Check formatting**: `deno task fmt:check`
+- **Lint**: `deno task lint`
+- **Run tests**: `deno task test`
 
 ### TUI Commands
-- `bun run tui:playground:counter` - Run counter example
-- `bun run tui:playground:clock` - Run clock example
-- `bun run tui:playground:layout` - Run layout example
-- `bun run tui:playground:spinner` - Run spinner example
+
+- `deno run --allow-all tui/playground/agent.tsx` - Run agent playground
 
 ## Code Style Guidelines
 
 - **Language**: TypeScript with strict mode
-- **Runtime**: Bun
-- **Formatting**: Biome
-- **Imports**: ES modules with relative imports for local files
+- **Runtime**: Deno
+- **Formatting**: deno fmt (tabs, 120 line width, double quotes)
+- **Imports**: ES modules with `.ts` extensions and `@/` path alias
 - **Naming**: camelCase for variables/functions, PascalCase for types/classes, UPPER_CASE for constants
 
 ## Sub-package Guidelines
 
-Each sub-package (`tui/`, `agent/`) has its own AGENTS.md with package-specific details. Refer to those for architecture and implementation guidance.
+Each sub-package (`tui/`, `agent/`) has its own AGENTS.md with package-specific details. Refer to those for architecture
+and implementation guidance.

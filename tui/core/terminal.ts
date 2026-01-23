@@ -1,4 +1,5 @@
-import type { Cell } from "../preact/types/index";
+import process from "node:process";
+import type { Cell } from "../preact/types/index.ts";
 
 export class Terminal {
 	stdout: typeof process.stdout;
@@ -22,8 +23,9 @@ export class Terminal {
 	}
 
 	private createEmptyBuffer(): Cell[][] {
-		return Array.from({ length: this.height }, () =>
-			Array.from({ length: this.width }, () => ({ char: " ", style: "" })),
+		return Array.from(
+			{ length: this.height },
+			() => Array.from({ length: this.width }, () => ({ char: " ", style: "" })),
 		);
 	}
 

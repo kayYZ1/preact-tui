@@ -1,3 +1,4 @@
+import process from "node:process";
 import { signal } from "@preact/signals-core";
 
 export interface KeyEvent {

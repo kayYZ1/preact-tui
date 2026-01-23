@@ -1,7 +1,7 @@
 import Y from "yoga-layout";
-import { drawBox } from "@/tui/core/primitives/draw-box";
-import type { BoxInstance, ElementHandler, Position } from "../types/index";
-import type { LayoutHandler } from "./index";
+import { drawBox } from "@/tui/core/primitives/draw-box.ts";
+import type { BoxInstance, ElementHandler, Position } from "../types/index.ts";
+import type { LayoutHandler } from "./index.ts";
 
 const FLEX_DIRECTION_MAP = {
 	row: Y.FLEX_DIRECTION_ROW,

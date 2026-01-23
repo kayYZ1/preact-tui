@@ -1,12 +1,13 @@
+import process from "node:process";
 import { effect } from "@preact/signals-core";
 import Y from "yoga-layout";
-import { inputManager } from "../core/input";
-import { Terminal } from "../core/terminal";
-import { ElementType, getElement } from "./elements";
-import { clearPendingCursor, getPendingCursor } from "./elements/text-input";
-import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals";
-import type { VNode } from "./jsx-runtime";
-import type { Instance, Position, RenderContext } from "./types/index";
+import { inputManager } from "../core/input.ts";
+import { Terminal } from "../core/terminal.ts";
+import { ElementType, getElement } from "./elements/index.ts";
+import { clearPendingCursor, getPendingCursor } from "./elements/text-input.ts";
+import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals.ts";
+import type { VNode } from "./jsx-runtime.ts";
+import type { Instance, Position, RenderContext } from "./types/index.ts";
 
 export class Renderer {
 	terminal: Terminal;

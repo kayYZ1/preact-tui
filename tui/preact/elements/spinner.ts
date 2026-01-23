@@ -1,5 +1,6 @@
-import type { ElementHandler, Position, SpinnerInstance } from "../types/index";
-import type { LayoutHandler } from "./index";
+import { toAnsi } from "@/tui/core/primitives/color.ts";
+import type { ElementHandler, Position, SpinnerInstance } from "../types/index.ts";
+import type { LayoutHandler } from "./index.ts";
 
 const BRAILLE_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
@@ -16,7 +17,7 @@ export const SpinnerElement: ElementHandler<SpinnerInstance> = (instance, contex
 	const frameIndex = Math.floor(Date.now() / interval) % BRAILLE_FRAMES.length;
 	const frame = BRAILLE_FRAMES[frameIndex];
 
-	const baseColor = Bun.color(color, "ansi") ?? "\x1b[37m";
+	const baseColor = toAnsi(color) ?? "\x1b[37m";
 	const resetCode = "\x1b[0m";
 
 	return [

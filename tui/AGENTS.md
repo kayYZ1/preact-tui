@@ -1,6 +1,7 @@
 # AGENTS.md - TUI Framework
 
-A terminal UI framework using a custom JSX runtime, Yoga layout engine for flexbox positioning, and ANSI escape codes for rendering.
+A terminal UI framework using a custom JSX runtime, Yoga layout engine for flexbox positioning, and ANSI escape codes
+for rendering.
 
 ## Architecture Overview
 
@@ -47,12 +48,14 @@ tui/
 ### Core Classes
 
 #### `Terminal` (core/terminal.ts)
+
 - Double-buffered rendering for flicker-free updates
 - Manages character grid with styles per cell
 - Tracks cursor state to avoid redundant escape sequences
 - Methods: `render(positions)`, `clear()`, `showCursor()`, `hideCursor()`
 
 #### `Renderer` (preact/renderer.ts)
+
 - Bridges VNodes to terminal output
 - Creates Yoga layout tree from component tree
 - Uses `@preact/signals-core` effect() for reactive re-rendering
@@ -61,6 +64,7 @@ tui/
 ### Signals Integration
 
 The framework uses `@preact/signals-core` for reactivity:
+
 - `useSignal(initialValue)` - Creates a persistent signal (cached by component/hook index)
 - `useSignalEffect(fn)` - Runs effect when signals change, with cleanup support
 - Signals trigger automatic re-renders when `.value` changes
@@ -68,6 +72,7 @@ The framework uses `@preact/signals-core` for reactivity:
 ### Layout System (Yoga)
 
 Supports flexbox properties on `<Box>`:
+
 - `flex`, `flexDirection` (row/column/row-reverse/column-reverse)
 - `justifyContent`, `alignItems`
 - `gap`, `padding`
@@ -77,22 +82,26 @@ Supports flexbox properties on `<Box>`:
 ### Styling
 
 Text styling via `<Text>` props:
-- `color` - Any color Bun.color() supports
+
+- `color` - Basic colors (red, blue, etc.), bright variants, or hex codes (#ff0000)
 - `bold`, `italic`, `underline`, `strikethrough`
 
 ## Adding New Features
 
 ### New Component Property
+
 1. Add prop to type in `preact/types/index.ts`
 2. Handle in `Renderer.applyBoxLayout()` or `createInstanceTree()`
 3. Handle in element handler (`elements/box.ts`, `elements/text.ts`, etc.)
 
 ### New Primitive
+
 1. Create file in `core/primitives/`
 2. Return `Position[]` array for terminal rendering
 3. Use in element handlers
 
 ### New Element Type
+
 1. Add type to `Instance` union in `types/index.ts`
 2. Create element handler in `preact/elements/`
 3. Register in `preact/elements/index.ts`
@@ -102,7 +111,7 @@ Text styling via `<Text>` props:
 
 - Element handlers are pure functions: `(instance, context) => Position[]`
 - Hooks use global index tracking (reset per render cycle)
-- Use `Bun.color(colorName, "ansi")` for color conversion
+- Use `toAnsi(colorName)` from `@/tui/core/primitives/color.ts` for color conversion
 - All coordinates are integer character positions
 - Text editing logic is centralized in `hooks/text-utils.ts`
 
