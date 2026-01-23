@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { assertEquals } from "@std/assert";
 import { signal } from "@preact/signals-core";
 import {
 	deleteBackward,
@@ -7,7 +7,7 @@ import {
 	moveCursor,
 	setCursor,
 	type TextState,
-} from "../preact/hooks/text-utils";
+} from "../preact/hooks/text-utils.ts";
 
 function createState(value = "", cursor = 0): TextState {
 	return {
@@ -16,102 +16,92 @@ function createState(value = "", cursor = 0): TextState {
 	};
 }
 
-describe("insertChar", () => {
-	it("inserts at cursor position", () => {
-		const state = createState("ac", 1);
-		insertChar(state, "b");
-		expect(state.value.value).toBe("abc");
-		expect(state.cursorPosition.value).toBe(2);
-	});
-
-	it("inserts at start", () => {
-		const state = createState("bc", 0);
-		insertChar(state, "a");
-		expect(state.value.value).toBe("abc");
-		expect(state.cursorPosition.value).toBe(1);
-	});
-
-	it("inserts at end", () => {
-		const state = createState("ab", 2);
-		insertChar(state, "c");
-		expect(state.value.value).toBe("abc");
-		expect(state.cursorPosition.value).toBe(3);
-	});
+Deno.test("insertChar - inserts at cursor position", () => {
+	const state = createState("ac", 1);
+	insertChar(state, "b");
+	assertEquals(state.value.value, "abc");
+	assertEquals(state.cursorPosition.value, 2);
 });
 
-describe("deleteBackward", () => {
-	it("deletes character before cursor", () => {
-		const state = createState("abc", 2);
-		const result = deleteBackward(state);
-		expect(result).toBe("ac");
-		expect(state.value.value).toBe("ac");
-		expect(state.cursorPosition.value).toBe(1);
-	});
-
-	it("returns null at start of string", () => {
-		const state = createState("abc", 0);
-		const result = deleteBackward(state);
-		expect(result).toBeNull();
-		expect(state.value.value).toBe("abc");
-	});
+Deno.test("insertChar - inserts at start", () => {
+	const state = createState("bc", 0);
+	insertChar(state, "a");
+	assertEquals(state.value.value, "abc");
+	assertEquals(state.cursorPosition.value, 1);
 });
 
-describe("deleteForward", () => {
-	it("deletes character at cursor", () => {
-		const state = createState("abc", 1);
-		const result = deleteForward(state);
-		expect(result).toBe("ac");
-		expect(state.value.value).toBe("ac");
-		expect(state.cursorPosition.value).toBe(1);
-	});
-
-	it("returns null at end of string", () => {
-		const state = createState("abc", 3);
-		const result = deleteForward(state);
-		expect(result).toBeNull();
-		expect(state.value.value).toBe("abc");
-	});
+Deno.test("insertChar - inserts at end", () => {
+	const state = createState("ab", 2);
+	insertChar(state, "c");
+	assertEquals(state.value.value, "abc");
+	assertEquals(state.cursorPosition.value, 3);
 });
 
-describe("moveCursor", () => {
-	it("moves cursor forward", () => {
-		const state = createState("abc", 0);
-		moveCursor(state, 2);
-		expect(state.cursorPosition.value).toBe(2);
-	});
-
-	it("moves cursor backward", () => {
-		const state = createState("abc", 2);
-		moveCursor(state, -1);
-		expect(state.cursorPosition.value).toBe(1);
-	});
-
-	it("clamps to start", () => {
-		const state = createState("abc", 1);
-		moveCursor(state, -5);
-		expect(state.cursorPosition.value).toBe(0);
-	});
-
-	it("clamps to end", () => {
-		const state = createState("abc", 1);
-		moveCursor(state, 10);
-		expect(state.cursorPosition.value).toBe(3);
-	});
+Deno.test("deleteBackward - deletes character before cursor", () => {
+	const state = createState("abc", 2);
+	const result = deleteBackward(state);
+	assertEquals(result, "ac");
+	assertEquals(state.value.value, "ac");
+	assertEquals(state.cursorPosition.value, 1);
 });
 
-describe("setCursor", () => {
-	it("sets cursor to position", () => {
-		const state = createState("abc", 0);
-		setCursor(state, 2);
-		expect(state.cursorPosition.value).toBe(2);
-	});
+Deno.test("deleteBackward - returns null at start of string", () => {
+	const state = createState("abc", 0);
+	const result = deleteBackward(state);
+	assertEquals(result, null);
+	assertEquals(state.value.value, "abc");
+});
 
-	it("clamps to bounds", () => {
-		const state = createState("abc", 0);
-		setCursor(state, 100);
-		expect(state.cursorPosition.value).toBe(3);
+Deno.test("deleteForward - deletes character at cursor", () => {
+	const state = createState("abc", 1);
+	const result = deleteForward(state);
+	assertEquals(result, "ac");
+	assertEquals(state.value.value, "ac");
+	assertEquals(state.cursorPosition.value, 1);
+});
 
-		setCursor(state, -5);
-		expect(state.cursorPosition.value).toBe(0);
-	});
+Deno.test("deleteForward - returns null at end of string", () => {
+	const state = createState("abc", 3);
+	const result = deleteForward(state);
+	assertEquals(result, null);
+	assertEquals(state.value.value, "abc");
+});
+
+Deno.test("moveCursor - moves cursor forward", () => {
+	const state = createState("abc", 0);
+	moveCursor(state, 2);
+	assertEquals(state.cursorPosition.value, 2);
+});
+
+Deno.test("moveCursor - moves cursor backward", () => {
+	const state = createState("abc", 2);
+	moveCursor(state, -1);
+	assertEquals(state.cursorPosition.value, 1);
+});
+
+Deno.test("moveCursor - clamps to start", () => {
+	const state = createState("abc", 1);
+	moveCursor(state, -5);
+	assertEquals(state.cursorPosition.value, 0);
+});
+
+Deno.test("moveCursor - clamps to end", () => {
+	const state = createState("abc", 1);
+	moveCursor(state, 10);
+	assertEquals(state.cursorPosition.value, 3);
+});
+
+Deno.test("setCursor - sets cursor to position", () => {
+	const state = createState("abc", 0);
+	setCursor(state, 2);
+	assertEquals(state.cursorPosition.value, 2);
+});
+
+Deno.test("setCursor - clamps to bounds", () => {
+	const state = createState("abc", 0);
+	setCursor(state, 100);
+	assertEquals(state.cursorPosition.value, 3);
+
+	setCursor(state, -5);
+	assertEquals(state.cursorPosition.value, 0);
 });

@@ -1,8 +1,8 @@
-import { type BaseInstance, type ElementHandler, ElementType } from "../types/index";
-import { BoxElement, BoxLayout } from "./box";
-import { SpinnerElement, SpinnerLayout } from "./spinner";
-import { TextElement, TextLayout } from "./text";
-import { TextInputElement, TextInputLayout } from "./text-input";
+import { type BaseInstance, type ElementHandler, ElementType } from "../types/index.ts";
+import { BoxElement, BoxLayout } from "./box.ts";
+import { SpinnerElement, SpinnerLayout } from "./spinner.ts";
+import { TextElement, TextLayout } from "./text.ts";
+import { TextInputElement, TextInputLayout } from "./text-input.ts";
 
 /** Layout function applies Yoga properties to an instance */
 export type LayoutHandler<T extends BaseInstance = BaseInstance> = (instance: T) => void;

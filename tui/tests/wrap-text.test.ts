@@ -1,51 +1,47 @@
-import { describe, expect, it } from "bun:test";
-import { splitText, wrapText } from "../core/primitives/wrap-text";
+import { assertEquals } from "@std/assert";
+import { splitText, wrapText } from "../core/primitives/wrap-text.ts";
 
-describe("wrapText", () => {
-	it("wraps long text at word boundaries", () => {
-		const result = wrapText("hello world foo", 10);
-		expect(result).toEqual(["hello", "world foo"]);
-	});
-
-	it("breaks words longer than width", () => {
-		const result = wrapText("abcdefghij", 4);
-		expect(result).toEqual(["abcd", "efgh", "ij"]);
-	});
-
-	it("handles empty string", () => {
-		const result = wrapText("", 10);
-		expect(result).toEqual([""]);
-	});
-
-	it("handles width of 0", () => {
-		const result = wrapText("hello", 0);
-		expect(result).toEqual([]);
-	});
-
-	it("preserves single words shorter than width", () => {
-		const result = wrapText("hi", 10);
-		expect(result).toEqual(["hi"]);
-	});
+Deno.test("wrapText - wraps long text at word boundaries", () => {
+	const result = wrapText("hello world foo", 10);
+	assertEquals(result, ["hello", "world foo"]);
 });
 
-describe("splitText", () => {
-	it("splits text at exact character boundaries", () => {
-		const result = splitText("abcdefghij", 4);
-		expect(result).toEqual(["abcd", "efgh", "ij"]);
-	});
+Deno.test("wrapText - breaks words longer than width", () => {
+	const result = wrapText("abcdefghij", 4);
+	assertEquals(result, ["abcd", "efgh", "ij"]);
+});
 
-	it("handles text shorter than width", () => {
-		const result = splitText("abc", 10);
-		expect(result).toEqual(["abc"]);
-	});
+Deno.test("wrapText - handles empty string", () => {
+	const result = wrapText("", 10);
+	assertEquals(result, [""]);
+});
 
-	it("handles empty string", () => {
-		const result = splitText("", 10);
-		expect(result).toEqual([""]);
-	});
+Deno.test("wrapText - handles width of 0", () => {
+	const result = wrapText("hello", 0);
+	assertEquals(result, []);
+});
 
-	it("handles exact width match", () => {
-		const result = splitText("abcd", 4);
-		expect(result).toEqual(["abcd"]);
-	});
+Deno.test("wrapText - preserves single words shorter than width", () => {
+	const result = wrapText("hi", 10);
+	assertEquals(result, ["hi"]);
+});
+
+Deno.test("splitText - splits text at exact character boundaries", () => {
+	const result = splitText("abcdefghij", 4);
+	assertEquals(result, ["abcd", "efgh", "ij"]);
+});
+
+Deno.test("splitText - handles text shorter than width", () => {
+	const result = splitText("abc", 10);
+	assertEquals(result, ["abc"]);
+});
+
+Deno.test("splitText - handles empty string", () => {
+	const result = splitText("", 10);
+	assertEquals(result, [""]);
+});
+
+Deno.test("splitText - handles exact width match", () => {
+	const result = splitText("abcd", 4);
+	assertEquals(result, ["abcd"]);
 });

@@ -1,7 +1,7 @@
-import { formatText } from "@/tui/core/primitives/format-text";
-import { wrapText } from "@/tui/core/primitives/wrap-text";
-import type { ElementHandler, Position, TextInstance } from "../types/index";
-import type { LayoutHandler } from "./index";
+import { formatText } from "@/tui/core/primitives/format-text.ts";
+import { wrapText } from "@/tui/core/primitives/wrap-text.ts";
+import type { ElementHandler, Position, TextInstance } from "../types/index.ts";
+import type { LayoutHandler } from "./index.ts";
 
 export const TextLayout: LayoutHandler<TextInstance> = (instance) => {
 	const { width, height, flex } = instance.props;

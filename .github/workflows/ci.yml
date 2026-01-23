@@ -1,28 +1,29 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
+    ci:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+            - uses: denoland/setup-deno@v2
+              with:
+                  deno-version: v2.x
 
-      - name: Cache bun dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-
+            - name: Cache Deno dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/deno
+                  key: deno-${{ hashFiles('deno.lock') }}
+                  restore-keys: deno-
 
-      - run: bun install --frozen-lockfile
-
-      - run: bun run biome:check && bun test
+            - run: deno task fmt:check && deno task lint && deno task test

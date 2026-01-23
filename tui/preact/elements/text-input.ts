@@ -1,6 +1,7 @@
-import { splitText, wrapText } from "@/tui/core/primitives/wrap-text";
-import type { ElementHandler, Position, TextInputInstance } from "../types/index";
-import type { LayoutHandler } from "./index";
+import { toAnsi } from "@/tui/core/primitives/color.ts";
+import { splitText, wrapText } from "@/tui/core/primitives/wrap-text.ts";
+import type { ElementHandler, Position, TextInputInstance } from "../types/index.ts";
+import type { LayoutHandler } from "./index.ts";
 
 export const TextInputLayout: LayoutHandler<TextInputInstance> = (instance) => {
 	if (instance.props.width) {
@@ -92,7 +93,7 @@ export const TextInputElement: ElementHandler<TextInputInstance> = (instance, co
 
 		const colorToUse = isPlaceholder ? instance.props.placeholderColor : instance.props.color;
 		if (colorToUse) {
-			const ansi = Bun.color(colorToUse, "ansi");
+			const ansi = toAnsi(colorToUse);
 			if (ansi) {
 				formattedText = `${ansi}${formattedText}\x1b[0m`;
 			}

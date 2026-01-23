@@ -1,4 +1,4 @@
-import type { BoxProps, SpinnerProps, TextInputProps, TextProps } from "./types/index";
+import type { BoxProps, SpinnerProps, TextInputProps, TextProps } from "./types/index.ts";
 
 export interface VNode<P = any> {
 	type: string | ((props: P) => VNode);

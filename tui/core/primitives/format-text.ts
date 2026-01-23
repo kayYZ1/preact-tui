@@ -1,4 +1,5 @@
-import type { Instance } from "@/tui/preact/types/index";
+import type { Instance } from "@/tui/preact/types/index.ts";
+import { toAnsi } from "./color.ts";
 
 export const formatText = (instance: Instance): string => {
 	if (instance.type !== "text") return "";
@@ -6,7 +7,7 @@ export const formatText = (instance: Instance): string => {
 	let text = instance.props.children || "";
 
 	if (typeof instance.props.color === "string") {
-		const ansi = Bun.color(instance.props.color, "ansi");
+		const ansi = toAnsi(instance.props.color);
 		if (ansi) {
 			text = `${ansi}${text}\x1b[0m`;
 		}

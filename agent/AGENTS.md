@@ -24,13 +24,15 @@ agent/
 ## Integration with TUI
 
 The agent will import from the sibling `tui/` package:
+
 ```typescript
-import { Box, Text, run, useSignal } from "../tui";
+import { Box, run, Text, useSignal } from "../tui";
 ```
 
 ## Getting Started
 
 When implementing the agent:
+
 1. Define the agent's core loop in `core/agent.ts`
 2. Create UI components in `ui/` using the TUI framework
 3. Add tool implementations in `core/tools/`

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { assertEquals } from "@std/assert";
 
 function calculateCursor(cursorPos: number, width: number) {
 	return {
@@ -7,46 +7,44 @@ function calculateCursor(cursorPos: number, width: number) {
 	};
 }
 
-describe("TextInput cursor calculation", () => {
-	it("cursor at start", () => {
-		const { line, col } = calculateCursor(0, 20);
-		expect(line).toBe(0);
-		expect(col).toBe(0);
-	});
+Deno.test("TextInput cursor calculation - cursor at start", () => {
+	const { line, col } = calculateCursor(0, 20);
+	assertEquals(line, 0);
+	assertEquals(col, 0);
+});
 
-	it("cursor in middle of first line", () => {
-		const { line, col } = calculateCursor(10, 20);
-		expect(line).toBe(0);
-		expect(col).toBe(10);
-	});
+Deno.test("TextInput cursor calculation - cursor in middle of first line", () => {
+	const { line, col } = calculateCursor(10, 20);
+	assertEquals(line, 0);
+	assertEquals(col, 10);
+});
 
-	it("cursor at end of first line", () => {
-		const { line, col } = calculateCursor(19, 20);
-		expect(line).toBe(0);
-		expect(col).toBe(19);
-	});
+Deno.test("TextInput cursor calculation - cursor at end of first line", () => {
+	const { line, col } = calculateCursor(19, 20);
+	assertEquals(line, 0);
+	assertEquals(col, 19);
+});
 
-	it("cursor wraps to second line", () => {
-		const { line, col } = calculateCursor(20, 20);
-		expect(line).toBe(1);
-		expect(col).toBe(0);
-	});
+Deno.test("TextInput cursor calculation - cursor wraps to second line", () => {
+	const { line, col } = calculateCursor(20, 20);
+	assertEquals(line, 1);
+	assertEquals(col, 0);
+});
 
-	it("cursor in middle of second line", () => {
-		const { line, col } = calculateCursor(25, 20);
-		expect(line).toBe(1);
-		expect(col).toBe(5);
-	});
+Deno.test("TextInput cursor calculation - cursor in middle of second line", () => {
+	const { line, col } = calculateCursor(25, 20);
+	assertEquals(line, 1);
+	assertEquals(col, 5);
+});
 
-	it("cursor on third line", () => {
-		const { line, col } = calculateCursor(45, 20);
-		expect(line).toBe(2);
-		expect(col).toBe(5);
-	});
+Deno.test("TextInput cursor calculation - cursor on third line", () => {
+	const { line, col } = calculateCursor(45, 20);
+	assertEquals(line, 2);
+	assertEquals(col, 5);
+});
 
-	it("handles narrow width", () => {
-		const { line, col } = calculateCursor(7, 3);
-		expect(line).toBe(2);
-		expect(col).toBe(1);
-	});
+Deno.test("TextInput cursor calculation - handles narrow width", () => {
+	const { line, col } = calculateCursor(7, 3);
+	assertEquals(line, 2);
+	assertEquals(col, 1);
 });

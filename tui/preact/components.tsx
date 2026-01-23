@@ -1,5 +1,5 @@
-import { useSignal, useSignalEffect } from "./hooks/signals";
-import type { BoxProps, SpinnerProps, TextInputProps, TextProps } from "./types/index";
+import { useSignal, useSignalEffect } from "./hooks/signals.ts";
+import type { BoxProps, SpinnerProps, TextInputProps, TextProps } from "./types/index.ts";
 
 const SPINNER_FRAME_COUNT = 10;
 
