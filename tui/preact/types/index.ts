@@ -98,6 +98,8 @@ export interface SpinnerProps extends BaseProps {
 	color?: string;
 	/** Frame interval in milliseconds (default: 80) */
 	interval?: number;
+	/** Current animation frame index (managed by Spinner component) */
+	frame?: number;
 }
 
 /** Base instance structure - all elements extend this */

@@ -13,9 +13,8 @@ export const SpinnerElement: ElementHandler<SpinnerInstance> = (instance, contex
 	const x = context.parentX + instance.yogaNode.getComputedLeft();
 	const y = context.parentY + instance.yogaNode.getComputedTop();
 
-	const { color = "white", interval = 80 } = instance.props;
-	const frameIndex = Math.floor(Date.now() / interval) % BRAILLE_FRAMES.length;
-	const frame = BRAILLE_FRAMES[frameIndex];
+	const { color = "white", frame = 0 } = instance.props;
+	const char = BRAILLE_FRAMES[frame % BRAILLE_FRAMES.length];
 
 	const baseColor = toAnsi(color) ?? "\x1b[37m";
 	const resetCode = "\x1b[0m";
@@ -24,7 +23,7 @@ export const SpinnerElement: ElementHandler<SpinnerInstance> = (instance, contex
 		{
 			x: Math.round(x),
 			y: Math.round(y),
-			text: `${baseColor}${frame}${resetCode}`,
+			text: `${baseColor}${char}${resetCode}`,
 		},
 	];
 };
