@@ -1,4 +1,4 @@
-import type { Instance } from "@/tui/preact/types/index.ts";
+import type { Instance } from "@/tui/render/types/index.ts";
 import { toAnsi } from "./color.ts";
 
 export const formatText = (instance: Instance): string => {
