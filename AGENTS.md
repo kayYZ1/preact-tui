@@ -1,13 +1,27 @@
 # AGENTS.md - Root (Monorepo)
 
-Repo for [..Insert name] coding agent with custom tui
+Terminal-based coding agent with custom TUI framework.
 
 ## Repository Structure
 
 ```
-├── tui/          # Preact-based TUI framework (see tui/AGENTS.md)
-├── agent/        # AI Agent implementation (see agent/AGENTS.md)
+├── api/          # LLM provider integrations (see api/AGENTS.md)
+├── core/         # Agent logic and tool execution (see core/AGENTS.md)
+├── agent/        # Application entry point and UI (see agent/AGENTS.md)
+├── tui/          # Terminal UI framework (see tui/AGENTS.md)
 ├── deno.json     # Deno configuration with tasks and import maps
+```
+
+## Package Dependencies
+
+```
+api/      (leaf - no internal deps)
+  ↑
+core/     (depends on api/)
+  ↑
+agent/    (depends on core/, api/, tui/)
+  ↑
+tui/      (leaf - no internal deps)
 ```
 
 ## Build/Run Commands
@@ -16,10 +30,21 @@ Repo for [..Insert name] coding agent with custom tui
 - **Check formatting**: `deno task fmt:check`
 - **Lint**: `deno task lint`
 - **Run tests**: `deno task test`
+- **Run agent**: `deno task agent`
 
-### TUI Commands
+### Development
 
-- `deno run --allow-all tui/playground/agent.tsx` - Run agent playground
+- `deno task playground:agent` - Run TUI playground
+
+## Import Aliases
+
+Use path aliases for cross-package imports:
+
+```typescript
+import { Anthropic } from "@/api/providers/anthropic.ts";
+import { Agent } from "@/core/agent.ts";
+import { Box, Text } from "@/tui/preact/components.tsx";
+```
 
 ## Code Style Guidelines
 
@@ -31,5 +56,9 @@ Repo for [..Insert name] coding agent with custom tui
 
 ## Sub-package Guidelines
 
-Each sub-package (`tui/`, `agent/`) has its own AGENTS.md with package-specific details. Refer to those for architecture
-and implementation guidance.
+Each sub-package has its own AGENTS.md with package-specific details:
+
+- `api/AGENTS.md` - LLM providers and API types
+- `core/AGENTS.md` - Agent loop, tools, context
+- `agent/AGENTS.md` - Application and UI
+- `tui/AGENTS.md` - Terminal UI framework

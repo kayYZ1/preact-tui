@@ -5,12 +5,17 @@
 		"fmt:check": "deno fmt --check",
 		"lint": "deno lint",
 		"test": "deno test",
+		"agent": "deno run --allow-all agent/index.ts",
 		"playground:agent": "deno run --allow-all tui/playground/agent.tsx"
 	},
 	"imports": {
 		"@preact/signals-core": "npm:@preact/signals-core@^1.11.1",
 		"yoga-layout": "npm:yoga-layout@^3.2.1",
 		"@/": "./",
+		"@/api/": "./api/",
+		"@/core/": "./core/",
+		"@/agent/": "./agent/",
+		"@/tui/": "./tui/",
 		"@/tui/preact/jsx-runtime": "./tui/preact/jsx-runtime.ts",
 		"@/tui/preact/jsx-dev-runtime": "./tui/preact/jsx-dev-runtime.ts",
 		"@std/assert": "jsr:@std/assert@^1"

@@ -1,39 +1,65 @@
-# AGENTS.md - AI Agent
+# AGENTS.md - Agent
 
-AI agent implementation that uses the TUI framework for its terminal interface.
+The actual agent implementation: UI, configuration, and application entry point.
 
-## Status
-
-🚧 **Not yet implemented** - This package is a placeholder for the future agent.
-
-## Planned Architecture
+## Architecture
 
 ```
 agent/
-├── index.ts              # Agent entry point
-├── core/                 # Core agent logic
-│   ├── agent.ts          # Main agent class
-│   ├── context.ts        # Conversation context management
-│   └── tools/            # Tool implementations
-├── providers/            # LLM provider integrations
-│   └── ...
-└── ui/                   # TUI components for the agent
-    └── ...               # Uses ../tui for rendering
+├── index.ts              # Application entry point
+├── config.ts             # Agent configuration (model, tools, etc.)
+├── ui/                   # TUI components
+│   ├── app.tsx           # Main application component
+│   ├── chat.tsx          # Chat/message display
+│   ├── input.tsx         # User input handling
+│   └── status.tsx        # Status bar, loading indicators
+└── commands/             # User command handlers
+    └── index.ts          # Command parsing and dispatch
 ```
 
-## Integration with TUI
+## Key Concepts
 
-The agent will import from the sibling `tui/` package:
+### Application Structure
+
+The agent ties together all packages:
 
 ```typescript
-import { Box, run, Text, useSignal } from "../tui";
+import { Anthropic } from "@/api/providers/anthropic.ts";
+import { Agent, createContext } from "@/core/agent.ts";
+import { Box, run, Text } from "@/tui/preact/index.ts";
 ```
 
-## Getting Started
+### UI Components
 
-When implementing the agent:
+Built with the TUI framework:
 
-1. Define the agent's core loop in `core/agent.ts`
-2. Create UI components in `ui/` using the TUI framework
-3. Add tool implementations in `core/tools/`
-4. Wire up LLM providers in `providers/`
+- Reactive state via signals
+- Vim-style input handling
+- Streaming response display
+
+### Configuration
+
+Runtime configuration for:
+
+- LLM provider and model selection
+- Enabled tools
+- System prompt customization
+
+## Dependencies
+
+- `@/api` - LLM provider clients
+- `@/core` - Agent loop and tools
+- `@/tui` - Terminal UI framework
+
+## Running
+
+```bash
+deno task agent
+```
+
+## Code Patterns
+
+- Keep UI components focused on presentation
+- Delegate business logic to `@/core`
+- Use signals for reactive UI updates
+- Handle errors gracefully with user feedback
