@@ -16,15 +16,15 @@ export function TextInput(props: TextInputProps) {
 }
 
 export function Spinner(props: SpinnerProps) {
-	const tick = useSignal(0);
+	const frame = useSignal(0);
 	const interval = props.interval ?? 80;
 
 	useSignalEffect(() => {
 		const timer = setInterval(() => {
-			tick.value = (tick.value + 1) % SPINNER_FRAME_COUNT;
+			frame.value = (frame.value + 1) % SPINNER_FRAME_COUNT;
 		}, interval);
 		return () => clearInterval(timer);
 	});
 
-	return <spinner {...props} />;
+	return <spinner {...props} frame={frame.value} />;
 }
