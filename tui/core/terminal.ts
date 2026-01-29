@@ -8,18 +8,42 @@ export class Terminal {
 	currentBuffer: Cell[][];
 	previousBuffer: Cell[][];
 	isFirstRender: boolean = true;
-	cursorVisible: boolean = false;
-	cursorX: number = 0;
-	cursorY: number = 0;
+	cursorVisible: boolean = true;
+	cursorX: number = -1;
+	cursorY: number = -1;
+	private resizeHandler: (() => void) | null = null;
+	private disposed: boolean = false;
 
 	constructor(stdout: typeof process.stdout = process.stdout) {
 		this.stdout = stdout;
-		this.width = process.stdout.columns || 80;
-		this.height = process.stdout.rows || 24;
+		this.width = this.stdout.columns || 80;
+		this.height = this.stdout.rows || 24;
 		this.currentBuffer = this.createEmptyBuffer();
 		this.previousBuffer = this.createEmptyBuffer();
+
+		this.setupResizeHandler();
+		this.enterAlternateScreen();
 		this.hideCursor();
 		this.clearScreen();
+	}
+
+	private isTTY(): boolean {
+		return this.stdout.isTTY ?? false;
+	}
+
+	private setupResizeHandler() {
+		if (!this.isTTY()) return;
+
+		this.resizeHandler = () => {
+			this.width = this.stdout.columns || 80;
+			this.height = this.stdout.rows || 24;
+			this.currentBuffer = this.createEmptyBuffer();
+			this.previousBuffer = this.createEmptyBuffer();
+			this.isFirstRender = true;
+			this.clearScreen();
+		};
+
+		this.stdout.on("resize", this.resizeHandler);
 	}
 
 	private createEmptyBuffer(): Cell[][] {
@@ -29,7 +53,23 @@ export class Terminal {
 		);
 	}
 
+	private clearScreen() {
+		if (!this.isTTY()) return;
+		this.stdout.write("\x1b[2J\x1b[H");
+	}
+
+	enterAlternateScreen() {
+		if (!this.isTTY()) return;
+		this.stdout.write("\x1b[?1049h");
+	}
+
+	exitAlternateScreen() {
+		if (!this.isTTY()) return;
+		this.stdout.write("\x1b[?1049l");
+	}
+
 	hideCursor() {
+		if (!this.isTTY()) return;
 		if (this.cursorVisible) {
 			this.stdout.write("\x1b[?25l");
 			this.cursorVisible = false;
@@ -37,6 +77,7 @@ export class Terminal {
 	}
 
 	showCursor() {
+		if (!this.isTTY()) return;
 		if (!this.cursorVisible) {
 			this.stdout.write("\x1b[?25h");
 			this.cursorVisible = true;
@@ -44,23 +85,12 @@ export class Terminal {
 	}
 
 	setCursorPosition(x: number, y: number) {
+		if (!this.isTTY()) return;
 		if (this.cursorX !== x || this.cursorY !== y) {
 			this.stdout.write(`\x1b[${y + 1};${x + 1}H`);
 			this.cursorX = x;
 			this.cursorY = y;
 		}
-	}
-
-	private clearScreen() {
-		this.stdout.write("\x1b[2J\x1b[H");
-	}
-
-	clear() {
-		this.currentBuffer = this.createEmptyBuffer();
-		this.previousBuffer = this.createEmptyBuffer();
-		this.isFirstRender = true;
-		this.showCursor();
-		this.clearScreen();
 	}
 
 	private extractStyle(str: string): { chars: string[]; styles: string[] } {
@@ -76,10 +106,16 @@ export class Terminal {
 			if (char === "\x1b" && nextChar === "[") {
 				let j = i + 2;
 				while (j < str.length && str[j] !== "m") j++;
-				currentStyle += str.slice(i, j + 1);
+				const sequence = str.slice(i, j + 1);
+				if (sequence === "\x1b[0m") {
+					currentStyle = "";
+				} else {
+					currentStyle = sequence;
+				}
 				i = j + 1;
 			} else if (char !== undefined) {
-				chars.push(char);
+				const sanitized = char === "\n" || char === "\r" || char === "\t" ? " " : char;
+				chars.push(sanitized);
 				styles.push(currentStyle);
 				i++;
 			} else {
@@ -118,6 +154,8 @@ export class Terminal {
 	}
 
 	private flush() {
+		if (!this.isTTY()) return;
+
 		let output = "";
 
 		for (let y = 0; y < this.height; y++) {
@@ -145,5 +183,26 @@ export class Terminal {
 
 		this.previousBuffer = this.currentBuffer.map((row) => row.map((cell) => ({ ...cell })));
 		this.isFirstRender = false;
+	}
+
+	dispose() {
+		if (this.disposed) return;
+		this.disposed = true;
+
+		if (this.resizeHandler) {
+			this.stdout.off("resize", this.resizeHandler);
+			this.resizeHandler = null;
+		}
+
+		this.currentBuffer = this.createEmptyBuffer();
+		this.previousBuffer = this.createEmptyBuffer();
+		this.isFirstRender = true;
+		this.showCursor();
+		this.exitAlternateScreen();
+	}
+
+	/** @deprecated Use dispose() instead */
+	clear() {
+		this.dispose();
 	}
 }

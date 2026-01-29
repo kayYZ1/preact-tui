@@ -124,7 +124,7 @@ export class Renderer {
 			this.rootInstance = null;
 		}
 		cleanupEffects();
-		this.terminal.clear();
+		this.terminal.dispose();
 	}
 }
 
