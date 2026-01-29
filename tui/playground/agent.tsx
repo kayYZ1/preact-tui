@@ -39,7 +39,7 @@ function Agent() {
 		onSubmit: handleSubmit,
 	});
 
-	const visibleMessages = messages.value.slice(-8);
+	const visibleMessages = messages.value;
 
 	return (
 		<Box flex flexDirection="column" padding={1} gap={1}>

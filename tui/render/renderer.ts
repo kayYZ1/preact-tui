@@ -56,9 +56,11 @@ export class Renderer {
 		element.layout(instance);
 
 		if (element.hasChildren) {
-			const children = Array.isArray(vnode.props.children)
+			const rawChildren = Array.isArray(vnode.props.children)
 				? vnode.props.children
 				: [vnode.props.children].filter(Boolean);
+
+			const children = rawChildren.flat(Infinity);
 
 			for (const child of children) {
 				if (typeof child === "string" || typeof child === "number") {
