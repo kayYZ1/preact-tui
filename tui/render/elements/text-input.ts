@@ -1,6 +1,6 @@
 import { toAnsi } from "@/tui/core/primitives/color.ts";
 import { splitText, wrapText } from "@/tui/core/primitives/wrap-text.ts";
-import type { ElementHandler, Position, TextInputInstance } from "../types/index.ts";
+import type { CursorStyle, ElementHandler, Position, TextInputInstance } from "../types/index.ts";
 import type { LayoutHandler } from "./index.ts";
 
 export const TextInputLayout: LayoutHandler<TextInputInstance> = (instance) => {
@@ -24,6 +24,7 @@ interface CursorInfo {
 	x: number;
 	y: number;
 	visible: boolean;
+	style?: CursorStyle;
 }
 
 let pendingCursor: CursorInfo | null = null;
@@ -112,6 +113,7 @@ export const TextInputElement: ElementHandler<TextInputInstance> = (instance, co
 			x: Math.round(x) + cursorCol,
 			y: Math.round(y) + cursorLine,
 			visible: true,
+			style: instance.props.cursorStyle,
 		};
 	}
 

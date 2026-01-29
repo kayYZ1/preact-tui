@@ -31,7 +31,7 @@ function Agent() {
 		}, 1500);
 	};
 
-	useTextInput({
+	const { cursorStyle } = useTextInput({
 		value: input,
 		cursorPosition: cursor,
 		mode,
@@ -68,6 +68,7 @@ function Agent() {
 				<TextInput
 					value={input.value}
 					cursorPosition={cursor.value}
+					cursorStyle={cursorStyle}
 					placeholder="Type a message..."
 					placeholderColor="gray"
 					focused

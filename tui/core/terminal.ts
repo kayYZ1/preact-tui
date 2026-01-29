@@ -1,5 +1,5 @@
 import process from "node:process";
-import type { Cell } from "../preact/types/index.ts";
+import type { Cell, CursorStyle } from "../render/types/index.ts";
 
 export class Terminal {
 	stdout: typeof process.stdout;
@@ -11,6 +11,7 @@ export class Terminal {
 	cursorVisible: boolean = true;
 	cursorX: number = -1;
 	cursorY: number = -1;
+	cursorStyle: CursorStyle = "bar";
 	private resizeHandler: (() => void) | null = null;
 	private disposed: boolean = false;
 
@@ -81,6 +82,15 @@ export class Terminal {
 		if (!this.cursorVisible) {
 			this.stdout.write("\x1b[?25h");
 			this.cursorVisible = true;
+		}
+	}
+
+	setCursorStyle(style: CursorStyle) {
+		if (!this.isTTY()) return;
+		if (this.cursorStyle !== style) {
+			const code = style === "block" ? 2 : 6;
+			this.stdout.write(`\x1b[${code} q`);
+			this.cursorStyle = style;
 		}
 	}
 

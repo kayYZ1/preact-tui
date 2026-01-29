@@ -1,4 +1,5 @@
 import type { Signal } from "@preact/signals-core";
+import type { CursorStyle } from "../types/index.ts";
 import { inputManager, type KeyEvent } from "../../core/input.ts";
 import { getHookKey, hasCleanup, setCleanup } from "./signals.ts";
 import { deleteBackward, deleteForward, insertChar, moveCursor, setCursor, type TextState } from "./text-utils.ts";
@@ -140,9 +141,12 @@ export function useTextInput(options: UseTextInputOptions) {
 		setCleanup(key, cleanup);
 	}
 
+	const cursorStyle: CursorStyle = options.mode?.value === "NORMAL" ? "block" : "bar";
+
 	return {
 		value: options.value,
 		cursorPosition: options.cursorPosition,
 		mode: options.mode,
+		cursorStyle,
 	};
 }

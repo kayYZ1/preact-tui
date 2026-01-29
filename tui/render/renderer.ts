@@ -3,7 +3,7 @@ import { effect } from "@preact/signals-core";
 import Y from "yoga-layout";
 import { inputManager } from "../core/input.ts";
 import { Terminal } from "../core/terminal.ts";
-import { getElement } from "./elements/index.ts";
+import { ElementType, getElement } from "./elements/index.ts";
 import { clearPendingCursor, getPendingCursor } from "./elements/text-input.ts";
 import { cleanupEffects, nextComponent, resetHooks } from "./hooks/signals.ts";
 import type { VNode } from "./jsx-runtime.ts";
@@ -101,6 +101,7 @@ export class Renderer {
 		const cursor = getPendingCursor();
 		if (cursor?.visible) {
 			this.terminal.setCursorPosition(cursor.x, cursor.y);
+			this.terminal.setCursorStyle(cursor.style ?? "bar");
 			this.terminal.showCursor();
 		} else {
 			this.terminal.hideCursor();
